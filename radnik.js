@@ -1,4 +1,3 @@
-// import express from 'express'
 import { session } from './index.js'
 
 //prikazi radnike - GET
@@ -10,7 +9,6 @@ export const prikaziSveRadnike = async(req, res) => {
                 .run(query)
                 .then(result => {
                     result.records.forEach(record => {
-                        //console.log(record._fields[0].properties)
                         radnici.push(record._fields[0].properties)
                     });
                 })
@@ -44,7 +42,16 @@ export const dodajRadnika = async(req, res) => {
                 })
 
         if (!radnikPostoji) {
-            const query = `CREATE (r:Radnik {Ime: '${req.body.Ime}', Prezime: '${req.body.Prezime}', JMBG: '${req.body.JMBG}', Godina_rodjenja: ${req.body.Godina_rođenja}}) RETURN r`
+            const query = `CREATE (r:Radnik 
+                            {
+                                Ime: '${req.body.Ime}', 
+                                Prezime: '${req.body.Prezime}', 
+                                JMBG: '${req.body.JMBG}', 
+                                Godina_rodjenja: ${req.body.Godina_rođenja},
+                                Email: '${req.body.Email}',
+                                Broj_telefona: '${req.body.Broj_telefona}'
+                            }) 
+                            RETURN r`
 
             await session
                     .run(query)
@@ -75,7 +82,6 @@ export const obrisiRadnika = async(req, res) => {
         await session
                 .run(query0)
                 .then(result => {
-                    //console.log(result)
                     if(result.records.length !== 0) {
                         radnikPostoji = true
                     }
@@ -127,11 +133,10 @@ export const izmeniRadnika = async(req, res) => {
 
         if (radnikPostoji) {
             let izmenjeniRadnik = null
-            const query = `MATCH (r:Radnik {JMBG: '${req.body.JMBG}'}) SET r.Prezime = '${req.body.Prezime}', r.Email = '${req.body.Email}' RETURN r`
+            const query = `MATCH (r:Radnik {JMBG: '${req.body.JMBG}'}) SET r.Broj_telefona = '${req.body.Broj_telefona}', r.Email = '${req.body.Email}' RETURN r`
             await session
                     .run(query)
                     .then(result => {
-                        //console.log(result)
                         izmenjeniRadnik = result.records[0]._fields[0].properties
                     })
                     .catch(err => {
