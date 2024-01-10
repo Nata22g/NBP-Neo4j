@@ -121,7 +121,6 @@ export const izmeniRadnika = async(req, res) => {
         await session
                 .run(query0)
                 .then(result => {
-                    //console.log(result)
                     if(result.records.length !== 0) {
                         radnikPostoji = true
                     }
