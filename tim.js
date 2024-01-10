@@ -1,6 +1,6 @@
 import { session } from './index.js'
 
-//prikazi radnike - GET
+//prikazi timove - GET
 export const prikaziSveTimove = async(req, res) => {
     try {
         let timovi = []
@@ -23,12 +23,12 @@ export const prikaziSveTimove = async(req, res) => {
     }
 }
 
-//dodaj radnika - POST
+//dodaj tim - POST
 export const dodajTim = async(req, res) => {
     try {
         let dodatiTim = null
         let timPostoji = false
-        const query = `MATCH (t:Tim {Naziv: '${req.body.naziv}'}) RETURN t`
+        const query = `MATCH (t:Tim {Naziv: '${req.body.Naziv}'}) RETURN t`
 
         await session
                 .run(query)
@@ -44,8 +44,8 @@ export const dodajTim = async(req, res) => {
         if (!timPostoji) {
             const query1 = `CREATE (t:Tim 
                             {
-                                Naziv: '${req.body.naziv}', 
-                                Status: '${req.body.status}'
+                                Naziv: '${req.body.Naziv}', 
+                                Status: '${req.body.Status}'
                             }) 
                             RETURN t`
 
@@ -69,11 +69,11 @@ export const dodajTim = async(req, res) => {
     }
 }
 
-//obrisi radnika - DELETE
+//obrisi tim - DELETE
 export const obrisiTim = async(req, res) => {
     try {
         let timPostoji = false
-        const query = `MATCH (t:Tim {Naziv: '${req.body.naziv}'}) RETURN t`
+        const query = `MATCH (t:Tim {Naziv: '${req.body.Naziv}'}) RETURN t`
 
         await session
                 .run(query)
@@ -88,7 +88,7 @@ export const obrisiTim = async(req, res) => {
 
 
         if (timPostoji) {
-            const query1 = `MATCH (t:Tim {Naziv: '${req.body.naziv}'}) DETACH DELETE t`
+            const query1 = `MATCH (t:Tim {Naziv: '${req.body.Naziv}'}) DETACH DELETE t`
             await session
                     .run(query1)
                     .then(result => {
@@ -108,11 +108,11 @@ export const obrisiTim = async(req, res) => {
     }
 }
 
-//izmeni radnika - PUT
+//izmeni tim - PUT
 export const izmeniTim = async(req, res) => {
     try {
         let timPostoji = false
-        const query = `MATCH (t:Tim {Naziv: '${req.body.naziv}'}) RETURN t`
+        const query = `MATCH (t:Tim {Naziv: '${req.body.Naziv}'}) RETURN t`
 
         await session
                 .run(query)
@@ -128,7 +128,7 @@ export const izmeniTim = async(req, res) => {
 
         if (timPostoji) {
             let izmenjeniTim = null
-            const query1 = `MATCH (t:Tim {Naziv: '${req.body.naziv}'}) SET t.Status = '${req.body.status}' RETURN t`
+            const query1 = `MATCH (t:Tim {Naziv: '${req.body.Naziv}'}) SET t.Status = '${req.body.Status}' RETURN t`
             await session
                     .run(query1)
                     .then(result => {

@@ -36,6 +36,9 @@
 import express from 'express'
 import { driver as _driver, auth } from 'neo4j-driver'
 import { dodajRadnika, izmeniRadnika, obrisiRadnika, prikaziSveRadnike } from './radnik.js'
+import { dodajSektor, obrisiSektor, prikaziSveSektore } from './sektor.js'
+import { dodajProjekat, izmeniProjekat, obrisiProjekat, prikaziSveProjekte } from './projekat.js'
+import { dodajTim, izmeniTim, obrisiTim, prikaziSveTimove } from './tim.js'
 
 const app = express()
 app.use(express.json())
@@ -47,10 +50,28 @@ app.get('/', (req, res) => {
     res.send('It works!')
 })
 
+//radnik
 app.get('/prikazisveradnike', prikaziSveRadnike)
 app.post('/dodajradnika', dodajRadnika)
 app.delete('/obrisiradnika', obrisiRadnika)
 app.put('/izmeniradnika', izmeniRadnika)
+
+//sektor
+app.get('/prikazisvesektore', prikaziSveSektore)
+app.post('/dodajsektor', dodajSektor)
+app.delete('/obrisisektor', obrisiSektor)
+
+//tim
+app.get('/prikazisvetimove', prikaziSveTimove)
+app.post('/dodajtim', dodajTim)
+app.delete('/obrisitim', obrisiTim)
+app.put('/izmenitim', izmeniTim)
+
+//projekat
+app.get('/prikazisveprojekte', prikaziSveProjekte)
+app.post('/dodajprojekat', dodajProjekat)
+app.delete('/obrisiprojekat', obrisiProjekat)
+app.put('/izmeniprojekat', izmeniProjekat)
 
 app.listen('8080', () => {
     console.log('backend server is running')

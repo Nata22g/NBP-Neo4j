@@ -1,6 +1,6 @@
 import { session } from './index.js'
 
-//prikazi radnike - GET
+//prikazi projekte - GET
 export const prikaziSveProjekte = async(req, res) => {
     try {
         let projekti = []
@@ -23,12 +23,12 @@ export const prikaziSveProjekte = async(req, res) => {
     }
 }
 
-//dodaj radnika - POST
+//dodaj projekat - POST
 export const dodajProjekat = async(req, res) => {
     try {
         let dodatiProj = null
         let projPostoji = false
-        const query = `MATCH (p:Projekat {Naziv: '${req.body.naziv}'}) RETURN p`
+        const query = `MATCH (p:Projekat {Naziv: '${req.body.Naziv}'}) RETURN p`
 
         await session
                 .run(query)
@@ -44,11 +44,11 @@ export const dodajProjekat = async(req, res) => {
         if (!projPostoji) {
             const query1 = `CREATE (p:Projekat 
                             {
-                                Naziv: '${req.body.naziv}', 
-                                Status: '${req.body.status}', 
-                                Budzet: '${req.body.budzet}', 
-                                Datum_pocetka: ${req.body.datum_pocetka},   //dal je ovo string il ne
-                                Rok_izrade: '${req.body.rok_izrade}',       // i ovo
+                                Naziv: '${req.body.Naziv}', 
+                                Status: '${req.body.Status}', 
+                                Budzet: '${req.body.Budzet}', 
+                                Datum_pocetka: '${req.body.Datum_pocetka}',
+                                Rok_izrade: '${req.body.Rok_izrade}'
                             }) 
                             RETURN p`
 
@@ -76,7 +76,7 @@ export const dodajProjekat = async(req, res) => {
 export const obrisiProjekat = async(req, res) => {
     try {
         let projPostoji = false
-        const query = `MATCH (p:Projekat {Naziv: '${req.body.naziv}'}) RETURN p`
+        const query = `MATCH (p:Projekat {Naziv: '${req.body.Naziv}'}) RETURN p`
 
         await session
                 .run(query)
@@ -91,11 +91,11 @@ export const obrisiProjekat = async(req, res) => {
 
 
         if (projPostoji) {
-            const query1 = `MATCH (p:Projekat {Naziv: '${req.body.naziv}'}) DETACH DELETE p`
+            const query1 = `MATCH (p:Projekat {Naziv: '${req.body.Naziv}'}) DETACH DELETE p`
             await session
                     .run(query1)
                     .then(result => {
-                        console.log(result)
+                        //console.log(result)
                     })
                     .catch(err => {
                         console.log(err)
@@ -115,7 +115,7 @@ export const obrisiProjekat = async(req, res) => {
 export const izmeniProjekat = async(req, res) => {
     try {
         let projPostoji = false
-        const query = `MATCH (p:Projekat {Naziv: '${req.body.naziv}'}) RETURN p`
+        const query = `MATCH (p:Projekat {Naziv: '${req.body.Naziv}'}) RETURN p`
 
         await session
                 .run(query)
@@ -131,7 +131,7 @@ export const izmeniProjekat = async(req, res) => {
 
         if (projPostoji) {
             let izmenjeniProj = null
-            const query1 = `MATCH (p:Projekat {Naziv: '${req.body.naziv}'}) SET p.Status = '${req.body.status}' RETURN p`
+            const query1 = `MATCH (p:Projekat {Naziv: '${req.body.Naziv}'}) SET p.Status = '${req.body.Status}' RETURN p`
             await session
                     .run(query1)
                     .then(result => {

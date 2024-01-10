@@ -62,7 +62,30 @@ export const dodajRadnika = async(req, res) => {
                         console.log(err)
                     })
 
+            await session
+                    .run(`MATCH (s:Sektor {Naziv: '${req.body.Sektor}'})
+                            SET s.Broj_zaposlenih = coalesce(s.Broj_zaposlenih, 0) + 1
+                            RETURN s.Broj_zaposlenih`)
+                    .then(result => {
+                        //console.log(`Broj zaposlenih u sektoru '${req.body.Sektor}': ${result.records[0]._fields[0]}`);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            
+            const query2 = `MATCH (a:Radnik {Ime: '${req.body.Ime}'}), (b:Sektor {Naziv: '${req.body.Sektor}'}) CREATE (a)-[:RADI_U]->(b) RETURN a, b`
+            
+            await session
+                    .run(query2)
+                    .then(result => {
+                        //console.log(`Broj zaposlenih u sektoru '${req.body.Sektor}': ${result.records[0]._fields[0]}`);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });            
+            
             return res.status(200).json(dodatiRadnik)
+            
         } else {
             return res.status(400).json('Radnik sa unetim JMBG-om vec postoji!')
         }
@@ -96,11 +119,22 @@ export const obrisiRadnika = async(req, res) => {
             await session
                     .run(query)
                     .then(result => {
-                        console.log(result)
+                        //console.log(result)
                     })
                     .catch(err => {
                         console.log(err)
                     })
+            
+            await session
+                    .run(`MATCH (s:Sektor {Naziv: '${req.body.Sektor}'})
+                            SET s.Broj_zaposlenih = coalesce(s.Broj_zaposlenih, 0) - 1
+                            RETURN s.Broj_zaposlenih`)
+                    .then(result => {
+                        //console.log(`Broj zaposlenih u sektoru '${req.body.Sektor}': ${result.records[0]._fields[0]}`);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
 
             return res.status(200).json('Radnik uspesno obrisan')
         } else {
