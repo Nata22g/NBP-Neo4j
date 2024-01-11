@@ -1,6 +1,6 @@
 import { session } from './index.js'
 
-//prikazi radnike - GET
+// GET
 export const prikaziSveRadnike = async(req, res) => {
     try {
         let radnici = []
@@ -23,7 +23,47 @@ export const prikaziSveRadnike = async(req, res) => {
     }
 }
 
-//dodaj radnika - POST
+export const prikaziSveRadnikeSektora = async(req, res) => {
+    try {
+
+        let sektorPostoji = false
+        const query0 = `MATCH (s:Sektor {Naziv: '${req.body.Naziv}'}) RETURN s`
+
+        await session
+                .run(query0)
+                .then(result => {
+                    if(result.records.length !== 0) {
+                        sektorPostoji = true
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+
+        if (sektorPostoji) {
+            let radnici = []
+            const query = `MATCH (r:Radnik)-[:RADI_U]->(s:Sektor {Naziv: '${req.body.Naziv}'}) RETURN r`
+            await session
+                    .run(query)
+                    .then(result => {
+                        result.records.forEach(record => {
+                            radnici.push(record._fields[0].properties)
+                        });
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+
+            return res.status(200).json(radnici)
+        } else {
+            return res.status(404).json('Sektor sa unetim nazivom ne postoji!')
+        }
+    } catch(err) {
+        return res.status(500).json(err)
+    }
+}
+
+// POST
 export const dodajRadnika = async(req, res) => {
     try {
         let dodatiRadnik = null
@@ -63,7 +103,7 @@ export const dodajRadnika = async(req, res) => {
                     })
 
             await session
-                    .run(`MATCH (s:Sektor {Naziv: '${req.body.Sektor}'})
+                    .run(`MATCH (s:Sektor {Naziv: '${req.body.Naziv}'})
                             SET s.Broj_zaposlenih = coalesce(s.Broj_zaposlenih, 0) + 1
                             RETURN s.Broj_zaposlenih`)
                     .then(result => {
@@ -73,7 +113,7 @@ export const dodajRadnika = async(req, res) => {
                         console.log(err);
                     });
             
-            const query2 = `MATCH (a:Radnik {Ime: '${req.body.Ime}'}), (b:Sektor {Naziv: '${req.body.Sektor}'}) CREATE (a)-[:RADI_U]->(b) RETURN a, b`
+            const query2 = `MATCH (a:Radnik {JMBG: '${req.body.JMBG}'}), (b:Sektor {Naziv: '${req.body.Naziv}'}) CREATE (a)-[:RADI_U]->(b) RETURN a, b`
             
             await session
                     .run(query2)
@@ -96,7 +136,79 @@ export const dodajRadnika = async(req, res) => {
     }
 }
 
-//obrisi radnika - DELETE
+export const postaviSefaZaSektor = async (req, res) => {
+    try {
+      const { JMBG, Naziv } = req.body
+  
+      // Provera da li sektor već ima vezu sa radnikom
+      const proveriVezuQuery = `MATCH (s:Sektor {Naziv: '${Naziv}'})-[:IMA_SEFA]->(r:Radnik) RETURN r`
+      const postojecaVezaResult = await session.run(proveriVezuQuery);
+  
+      if (postojecaVezaResult.records.length > 0) {
+        return res.status(400).json('Sektor već ima šefa.')
+      }
+  
+      // Kreiranje veze između sektora i radnika
+      const kreirajVezuQuery = `
+        MATCH (r:Radnik {JMBG: '${JMBG}'})
+        MATCH (s:Sektor {Naziv: '${Naziv}'})
+        CREATE (s)-[:IMA_SEFA]->(r)
+        RETURN r, s
+      `
+  
+      const rezultat = await session.run(kreirajVezuQuery)
+  
+      // Provera da li je veza uspešno kreirana
+      if (rezultat.records.length === 0) {
+        return res.status(500).json('Greška prilikom kreiranja veze.');
+      }
+  
+      const kreiraniRadnik = rezultat.records[0].get('r').properties;
+      const kreiraniSektor = rezultat.records[0].get('s').properties;
+  
+      return res.status(200).json({
+        radnik: kreiraniRadnik,
+        sektor: kreiraniSektor,
+        poruka: 'Veza između sektora i radnika je uspešno kreirana.'
+      });
+    } catch (err) {
+      return res.status(500).json(err);
+    }
+}
+  
+export const dodajRadnikaUTim = async(req, res) => {
+    try { 
+
+        const nasQuery = `MATCH (r:Radnik {JMBG: '${req.body.JMBG}'})-[:JE_CLAN]->(t:Tim {Naziv: '${req.body.Naziv}'}) RETURN r`
+        const postojecaVezaResult = await session.run(nasQuery);
+  
+        if (postojecaVezaResult.records.length > 0) {
+            return res.status(400).json('Radnik već pripada ovom timu!')
+        }
+
+
+        const kreirajVezuQuery = `MATCH (r:Radnik {JMBG: '${req.body.JMBG}'}), (t:Tim {Naziv: '${req.body.Naziv}'}) 
+                                    CREATE (r)-[:JE_CLAN]->(t)
+                                    CREATE (t)-[:SADRZI_CLANA]->(r)
+                                    RETURN r, t`
+
+        await session
+                .run(kreirajVezuQuery)
+                .then(result => {
+                    //console.log(`Broj zaposlenih u sektoru '${req.body.Sektor}': ${result.records[0]._fields[0]}`);
+                })
+                .catch(err => {
+                    console.log(err);
+                });           
+        
+        return res.status(200).json('Radnik je dodat u tim')      
+
+    } catch(err) {
+        return res.status(500).json(err)
+    }
+}
+
+// DELETE
 export const obrisiRadnika = async(req, res) => {
     try {
         let radnikPostoji = false
@@ -146,7 +258,7 @@ export const obrisiRadnika = async(req, res) => {
     }
 }
 
-//izmeni radnika - PUT
+// PUT
 export const izmeniRadnika = async(req, res) => {
     try {
         let radnikPostoji = false

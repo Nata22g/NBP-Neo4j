@@ -35,7 +35,7 @@
 
 import express from 'express'
 import { driver as _driver, auth } from 'neo4j-driver'
-import { dodajRadnika, izmeniRadnika, obrisiRadnika, prikaziSveRadnike } from './radnik.js'
+import { dodajRadnika, dodajRadnikaUTim, izmeniRadnika, obrisiRadnika, postaviSefaZaSektor, prikaziSveRadnike, prikaziSveRadnikeSektora } from './radnik.js'
 import { dodajSektor, obrisiSektor, prikaziSveSektore } from './sektor.js'
 import { dodajProjekat, izmeniProjekat, obrisiProjekat, prikaziSveProjekte } from './projekat.js'
 import { dodajTim, izmeniTim, obrisiTim, prikaziSveTimove } from './tim.js'
@@ -52,7 +52,10 @@ app.get('/', (req, res) => {
 
 //radnik
 app.get('/prikazisveradnike', prikaziSveRadnike)
+app.get('/prikaziradnikesektora', prikaziSveRadnikeSektora)
 app.post('/dodajradnika', dodajRadnika)
+app.post('/postavisefazasektor', postaviSefaZaSektor)
+app.post('/dodajradnikautim', dodajRadnikaUTim)
 app.delete('/obrisiradnika', obrisiRadnika)
 app.put('/izmeniradnika', izmeniRadnika)
 
