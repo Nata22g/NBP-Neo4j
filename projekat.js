@@ -1,6 +1,6 @@
 import { session } from './index.js'
 
-//prikazi projekte - GET
+// GET
 export const prikaziSveProjekte = async(req, res) => {
     try {
         let projekti = []
@@ -23,7 +23,7 @@ export const prikaziSveProjekte = async(req, res) => {
     }
 }
 
-//dodaj projekat - POST
+// POST
 export const dodajProjekat = async(req, res) => {
     try {
         let dodatiProj = null
@@ -109,7 +109,7 @@ export const dodajProjekat = async(req, res) => {
     }
 }
 
-//obrisi radnika - DELETE
+// DELETE
 export const obrisiProjekat = async(req, res) => {
     try {
         let projPostoji = false
@@ -148,7 +148,7 @@ export const obrisiProjekat = async(req, res) => {
     }
 }
 
-//izmeni radnika - PUT
+// PUT
 export const izmeniProjekat = async(req, res) => {
     try {
         let projPostoji = false

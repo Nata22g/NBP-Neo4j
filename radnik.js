@@ -297,3 +297,50 @@ export const izmeniRadnika = async(req, res) => {
         return res.status(500).json(err)
     }
 }
+
+export const dodajPrijatelja = async(req, res) => {
+    try{
+        let vecSuPrijatelji = false
+
+        const queryProvera = `MATCH (r1:Radnik {JMBG: '${req.body.JMBG1}'}), (r2:Radnik {JMBG: '${req.body.JMBG2}'})
+                                WHERE (r1)-[:JE_PRIJATELJ]-(r2)
+                                RETURN r1, r2`
+
+        await session
+                .run(queryProvera)
+                .then(result => {
+                    if(result.records.length !== 0) {
+                        vecSuPrijatelji = true
+                    }
+                })
+                .catch(err => {
+                    console.log(err)
+                })
+        
+        if(!vecSuPrijatelji){
+            let radnici = []
+            const query0 = `MATCH (r1:Radnik {JMBG: '${req.body.JMBG1}'}), (r2:Radnik {JMBG: '${req.body.JMBG2}'})
+                            CREATE (r1)-[:JE_PRIJATELJ]->(r2)
+                            RETURN r1, r2`
+
+                await session
+                        .run(query0)
+                        .then(result => {
+                            //console.log("blabla")
+                            console.log(result.records._fields)
+                            result.records.forEach(record => {
+                                radnici.push(record._fields[0].properties)
+                            });
+                        })
+                        .catch(err => {
+                            console.log(err)
+                        })
+
+            return res.status(200).json(radnici)
+        } else{
+            return res.status(400).json("Već ste prijatlj sa odabranim korisnikom")
+        }
+    } catch(err){
+        return res.status(500).json(err)
+    }
+}

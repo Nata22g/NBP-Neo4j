@@ -23,6 +23,60 @@ export const prikaziSveTimove = async(req, res) => {
     }
 }
 
+export const preporuciTimoveSaradnika = async(req, res) => {
+    try {
+            let timovi = []
+            const queryTimovi = `MATCH (r1:Radnik {JMBG: '${req.body.JMBG}'}), (t:Tim {Naziv: '${req.body.Naziv}'})-[:SADRZI_CLANA]->(r:Radnik)-[:JE_CLAN]->(t1:Tim)
+            WHERE t <> t1
+            AND NOT (r1)-[:JE_CLAN]->(t1)
+            RETURN t1 AS recommended_team`
+            await session
+                    .run(queryTimovi)
+                    .then(result => {
+                        result.records.forEach(record => {
+                            timovi.push(record._fields[0].properties)})
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+
+        if(timovi.length > 0)
+            return res.status(200).json(timovi)
+        else
+            return ("Već ste član svih timova u kojima su vaši saradnici.")
+
+    } catch(err) {
+        return res.status(500).json(err)
+    }
+}
+
+export const preporuciTimoveSektora = async(req, res) => {
+    try {
+            let timovi = []
+            const queryTimovi = `MATCH (r:Radnik {JMBG: '${req.body.JMBG}'})-[:RADI_U]->(s:Sektor), (p:Projekat)-[:CILJANI_SEKTOR]-(s)
+            WHERE NOT (r)-[:JE_CLAN]->(:Tim)-[:RADI_NA]->(p)
+            MATCH (p)<-[:RADI_NA]-(t:Tim)
+            RETURN t AS recommended_team`
+            await session
+                    .run(queryTimovi)
+                    .then(result => {
+                        result.records.forEach(record => {
+                            timovi.push(record._fields[0].properties)})
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+
+        if(timovi.length > 0)
+            return res.status(200).json(timovi)
+        else
+            return ("Već ste član svih timova koji rade na projektima iz vašeg sektora.")
+
+    } catch(err) {
+        return res.status(500).json(err)
+    }
+}
+
 //dodaj tim - POST
 export const dodajTim = async(req, res) => {
     try {
