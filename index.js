@@ -35,7 +35,7 @@
 
 import express from 'express'
 import { driver as _driver, auth } from 'neo4j-driver'
-import { dodajPrijatelja, dodajRadnika, dodajRadnikaUTim, izmeniRadnika, obrisiRadnika, postaviSefaZaSektor, prikaziSveRadnike, prikaziSveRadnikeSektora } from './radnik.js'
+import { dodajPrijatelja, dodajRadnika, dodajRadnikaUTim, izmeniRadnika, obrisiRadnika, postaviSefaZaSektor, predloziPrijatelja, prikaziSveRadnike, prikaziSveRadnikeSektora } from './radnik.js'
 import { dodajSektor, obrisiSektor, prikaziSveSektore } from './sektor.js'
 import { dodajProjekat, izmeniProjekat, obrisiProjekat, prikaziSveProjekte } from './projekat.js'
 import { dodajTim, izmeniTim, obrisiTim, preporuciTimoveSaradnika, preporuciTimoveSektora, prikaziSveTimove } from './tim.js'
@@ -59,6 +59,7 @@ app.post('/dodajradnikautim', dodajRadnikaUTim)
 app.delete('/obrisiradnika', obrisiRadnika)
 app.put('/izmeniradnika', izmeniRadnika)
 app.put('/dodajprijatelja', dodajPrijatelja)
+app.put('/predloziprijatelja', predloziPrijatelja)
 
 //sektor
 app.get('/prikazisvesektore', prikaziSveSektore)

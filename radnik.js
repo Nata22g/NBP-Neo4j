@@ -208,6 +208,35 @@ export const dodajRadnikaUTim = async(req, res) => {
     }
 }
 
+export const predloziPrijatelja = async(req, res) => {
+    try { 
+        let moguciPrijatelji = []
+
+        const query = `MATCH (r1:Radnik {JMBG: '${req.body.JMBG}'}), (r2: Radnik)
+                                WHERE (r1)-[:JE_PRIJATELJ]-(r2)
+                                MATCH (r3:Radnik)
+                                WHERE (r2)-[:JE_PRIJATELJ]-(r3) AND r1<>r3 AND NOT (r1)-[:JE_PRIJATELJ]-(r3)
+                                RETURN r3`
+
+        await session
+                .run(query)
+                .then(result => {
+                    //console.log(`Broj zaposlenih u sektoru '${req.body.Sektor}': ${result.records[0]._fields[0]}`);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+
+        if (moguciPrijatelji.length > 0)
+            return res.status(200).json(moguciPrijatelji)
+        else
+            return res.status(404).json("Nema nijednog predloga")
+
+    } catch(err) {
+        return res.status(500).json(err)
+    }
+}
+
 // DELETE
 export const obrisiRadnika = async(req, res) => {
     try {
