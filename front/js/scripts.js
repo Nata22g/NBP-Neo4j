@@ -434,10 +434,66 @@ const populateSektorDropdown = async () => {
     }
 };
 
+const populateSektorDropdown2 = async () => {
+    const dropdown = document.getElementById('nazivSektoraZaProj');
+    
+    try {
+        const response = await fetch('http://localhost:8080/prikazisvesektore');
+        if (response.ok) {
+            const data = await response.json();
+
+            // Clear existing options
+            dropdown.innerHTML = '';
+
+            // Add default option
+            const defaultOption = document.createElement('option');
+            defaultOption.text = 'Izaberite sektor';
+            defaultOption.value = '';
+            dropdown.add(defaultOption);
+
+            // Add options for each sector
+            data.forEach(sektor => {
+                const option = document.createElement('option');
+                option.text = sektor.Naziv;
+                option.value = sektor.Naziv;
+                dropdown.add(option);
+            });
+        } else {
+            console.error('Failed to fetch Sektori:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
+
 const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString(); // Adjust the format as needed
 };
+
+const izmeniProjekat = async (naziv, status) => {
+    try {
+        const response = await fetch('http://localhost:8080/izmeniprojekat', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                Naziv: naziv,
+                Status: status
+            })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Izmeni projeakt:', data);
+        } else {
+            console.error('Failed to update projekat:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
 
 const prikaziSveProjekte = async () => {
     try {
@@ -467,8 +523,14 @@ const prikaziSveProjekte = async () => {
             const tbody = document.createElement('tbody');
             data.forEach(projekat => {
                 const row = tbody.insertRow();
+
+                // Create phone number input field for editing
+                const statusInput = document.createElement('input');
+                statusInput.type = 'text';
+                statusInput.value = projekat['Status'];
+
                 row.insertCell(0).textContent = projekat.Naziv;
-                row.insertCell(1).textContent = projekat.Status;
+                row.insertCell(1).appendChild(statusInput);
                 row.insertCell(2).textContent = projekat.Budzet;
                 row.insertCell(3).textContent = formatDate(projekat.Datum_pocetka);
                 row.insertCell(4).textContent = formatDate(projekat.Rok_izrade);
@@ -486,14 +548,30 @@ const prikaziSveProjekte = async () => {
                 const editButton = document.createElement('button');
                 editButton.innerHTML = '<i class="bi bi-pencil"></i>';
                 editButton.addEventListener('click', () => {
-                    // Call your function to handle editing here
-                    // e.g., editProjekat(projekat.Naziv_projekta);
+                    statusInput.disabled = false;
+                    saveButton.style.display = 'inline';
+                });
+
+                // Create save button for saving changes
+                const saveButton = document.createElement('button');
+                saveButton.innerHTML = 'Save';
+                saveButton.style.display = 'none';
+                saveButton.addEventListener('click', () => {
+                    izmeniProjekat(
+                        projekat.Naziv,
+                        statusInput.value
+                    );
+                    statusInput.disabled = true;
+                    saveButton.style.display = 'none';
                 });
 
                 // Create cell for actions
                 const actionsCell = row.insertCell(5);
                 actionsCell.appendChild(deleteButton);
                 actionsCell.appendChild(editButton);
+                actionsCell.appendChild(saveButton);
+
+                statusInput.disabled = true;
             });
 
             // Append the table to the body
@@ -530,6 +608,8 @@ editButton.addEventListener('click', () => {
 });
 
 populateSektorDropdown()
+populateSektorDropdown2()
+
 
 const btnPrikaziRadnike = document.querySelector('.btnPrikaziRadnike')
 const btnPrikaziSektore = document.querySelector('.btnPrikaziSektore')
@@ -537,6 +617,7 @@ const btnDodajSektor = document.querySelector('.btnDodajSektor')
 const btnObrisiSektor = document.querySelector('.btnObrisiSektor')
 const btnDodajRadnika = document.querySelector('.btnDodajRadnika')
 const btnPrikaziProjekte = document.querySelector('.btnPrikaziProjekte')
+const btnDodajProjekat = document.querySelector('.dodajProjekatBtn')
 
 btnPrikaziRadnike.addEventListener('click', (event) => {
     event.preventDefault()
@@ -584,4 +665,41 @@ btnPrikaziProjekte.addEventListener('click', (event) => {
     event.preventDefault()
 
     prikaziSveProjekte()
+})
+
+btnDodajProjekat.addEventListener('click', async (event) => {
+    event.preventDefault()
+
+    const nazivProjekta = document.getElementById('nazivProjekta').value;
+    const statusProjekta = document.getElementById('statusProjekta').value;
+    const budzet = document.getElementById('budzet').value;
+    const datumPocetka = document.getElementById('datumPocetka').value;
+    const rokIzrade = document.getElementById('rokIzrade').value;
+    const nazivSektora = document.getElementById('nazivSektoraZaProj').value;
+
+    const data = {
+        Naziv_projekta: nazivProjekta,
+        Status_projekta: statusProjekta,
+        Budzet: budzet,
+        Datum_pocetka: datumPocetka,
+        Rok_izrade: rokIzrade,
+        Naziv_sektora: nazivSektora
+    };
+    //console.log(data)
+    const response = await fetch('http://localhost:8080/dodajprojekat', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+
+    if (response.ok) {
+        // Project added successfully, you may want to handle the response
+        console.log('Projekat uspesno dodat i povezan sa timom');
+        // You can also refresh the displayed projects
+        prikaziSveProjekte();
+    } else {
+        console.error('Failed to add Projekat:', response.statusText);
+    }
 })

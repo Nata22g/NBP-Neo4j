@@ -107,7 +107,7 @@ export const dodajProjekat = async(req, res) => {
     } catch(err) {
         return res.status(500).json(err)
     }
-}
+} //uradjeno
 
 // DELETE
 export const obrisiProjekat = async(req, res) => {
@@ -186,4 +186,4 @@ export const izmeniProjekat = async(req, res) => {
     } catch (err) {
         return res.status(500).json(err)
     }
-}
+} //uradjeno

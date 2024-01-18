@@ -39,6 +39,42 @@
                 </div>
             </div>
         </header>
+        <h2>Dodavanje projekta</h2>
+        <form>
+            <div class="mb-3">
+                <label for="nazivProjekta" class="form-label">Naziv projekta</label>
+                <input type="text" class="form-control" id="nazivProjekta" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="statusProjekta" class="form-label">Status projekta</label>
+                <input type="text" class="form-control" id="statusProjekta" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="budzet" class="form-label">Budzet</label>
+                <input type="number" class="form-control" id="budzet" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="datumPocetka" class="form-label">Datum pocetka</label>
+                <input type="date" class="form-control" id="datumPocetka" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="rokIzrade" class="form-label">Rok izrade</label>
+                <input type="date" class="form-control" id="rokIzrade" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="nazivSektora" class="form-label">Naziv sektora</label>
+                <select class="form-select" id="nazivSektoraZaProj" required>
+                    <!-- Dropdown options will be populated dynamically using JavaScript -->
+                </select>
+            </div>
+            
+            <button type="button" class="btn btn-primary dodajProjekatBtn">Dodaj projekat</button>
+        </form>
         <!-- Icons Grid-->
         <section class="features-icons bg-light text-center">
             <div class="container">
