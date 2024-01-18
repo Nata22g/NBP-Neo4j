@@ -21,7 +21,7 @@ export const prikaziSveProjekte = async(req, res) => {
     } catch(err) {
         return res.status(500).json(err)
     }
-}
+} //uradjeno
 
 // POST
 export const dodajProjekat = async(req, res) => {
@@ -146,7 +146,7 @@ export const obrisiProjekat = async(req, res) => {
     } catch (err) {
         return res.status(500).json(err)
     }
-}
+} //uradjeno
 
 // PUT
 export const izmeniProjekat = async(req, res) => {

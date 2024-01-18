@@ -21,7 +21,7 @@ export const prikaziSveRadnike = async(req, res) => {
     } catch(err) {
         return res.status(500).json(err)
     }
-}
+} //uradjeno
 
 export const prikaziSveRadnikeSektora = async(req, res) => {
     try {
@@ -61,7 +61,7 @@ export const prikaziSveRadnikeSektora = async(req, res) => {
     } catch(err) {
         return res.status(500).json(err)
     }
-}
+} //uradjeno
 
 // POST
 export const dodajRadnika = async(req, res) => {
@@ -87,7 +87,7 @@ export const dodajRadnika = async(req, res) => {
                                 Ime: '${req.body.Ime}', 
                                 Prezime: '${req.body.Prezime}', 
                                 JMBG: '${req.body.JMBG}', 
-                                Godina_rodjenja: ${req.body.Godina_rođenja},
+                                Godina_rodjenja: ${parseInt(req.body.Godina_rodjenja)},
                                 Email: '${req.body.Email}',
                                 Broj_telefona: '${req.body.Broj_telefona}'
                             }) 
@@ -134,7 +134,7 @@ export const dodajRadnika = async(req, res) => {
     } catch(err) {
         return res.status(500).json(err)
     }
-}
+} //uradjeno
 
 export const postaviSefaZaSektor = async (req, res) => {
     try {
@@ -285,7 +285,7 @@ export const obrisiRadnika = async(req, res) => {
     } catch (err) {
         return res.status(500).json(err)
     }
-}
+} //uradjeno
 
 // PUT
 export const izmeniRadnika = async(req, res) => {
@@ -325,7 +325,7 @@ export const izmeniRadnika = async(req, res) => {
     } catch (err) {
         return res.status(500).json(err)
     }
-}
+} //uradjeno
 
 export const dodajPrijatelja = async(req, res) => {
     try{

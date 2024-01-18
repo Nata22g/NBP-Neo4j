@@ -121,7 +121,7 @@ export const dodajTim = async(req, res) => {
     } catch(err) {
         return res.status(500).json(err)
     }
-}
+} //samo postoji ali se ne koristi
 
 //obrisi tim - DELETE
 export const obrisiTim = async(req, res) => {

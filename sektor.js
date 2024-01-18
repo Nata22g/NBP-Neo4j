@@ -21,7 +21,7 @@ export const prikaziSveSektore = async(req, res) => {
     } catch(err) {
         return res.status(500).json(err)
     }
-}
+} //uradjeno
 
 //dodaj sektor - POST
 export const dodajSektor = async(req, res) => {
@@ -67,7 +67,7 @@ export const dodajSektor = async(req, res) => {
     } catch(err) {
         return res.status(500).json(err)
     }
-}
+} //uradjeno
 
 //obrisi sektor - DELETE
 export const obrisiSektor = async(req, res) => {
@@ -106,7 +106,7 @@ export const obrisiSektor = async(req, res) => {
     } catch (err) {
         return res.status(500).json(err)
     }
-}
+} //uradjeno
 
 //izmeni sektor - PUT
 // export const izmeniSektor = async(req, res) => {
