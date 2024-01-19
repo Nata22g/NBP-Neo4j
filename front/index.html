@@ -31,7 +31,11 @@
                         <div class="roditeljskaKlasaProjekti text-center text-white">
                             <!-- Page heading-->
                             <h2 class="mb-5">Projekti info</h2>
-                            <button class="btnPrikaziProjekte btn btn-primary btn-lg ">Prikazi projekte</button>
+                            <div>
+                            
+                                <button class="btnPrikaziProjekte btn btn-primary btn-lg ">Prikazi projekte</button>
+                            </div>
+                            
                             <br/>
                             
                         </div>
@@ -75,6 +79,25 @@
             
             <button type="button" class="btn btn-primary dodajProjekatBtn">Dodaj projekat</button>
         </form>
+        <br />
+        <header class="masthead">
+            <div class="container position-relative">
+                <div class="row justify-content-center">
+                    <div class="col-xl-6">
+                        <div class="roditeljskaKlasaTimovi text-center text-white">
+                            <!-- Page heading-->
+                            <h2 class="mb-5">Timovi info</h2>
+                            <div>
+                                <button type="button" class="btnPrikaziTimove btn btn-primary btn-lg">Prikazi timove</button>
+                            </div>
+                            <br/>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
         <!-- Icons Grid-->
         <section class="features-icons bg-light text-center">
             <div class="container">
@@ -128,6 +151,7 @@
                     </div>
                 </div>
                 
+                <h2>Dodavanje novog radnika</h2>
                 <form id="dodajRadnikaForm">
                     <div class="mb-3">
                         <label for="ime" class="form-label">Ime</label>
@@ -176,11 +200,71 @@
         <section class="testimonials text-center bg-light">
             <div class="container radniciInfo justify-content-center">
                 <h2 class="mb-5">Radnici info</h2>
-                <button class="btnPrikaziRadnike btn btn-primary btn-lg ">Prikazi radnike</button>
+                <div>
+                    <button class="btnPrikaziRadnike btn btn-primary btn-lg ">Prikazi radnike</button>
+                </div>
                 <br/>
             </div>
+            <br/>
+            <br/>
+
+            <h3>Dodavanje radnika u tim</h3>
+            <form id="dodajRadnikaForm">
+                <div class="mb-3">
+                    <label for="jmbgRadnika">JMBG radnika:</label>
+                    <input type="text" id="jmbgRadnika" name="jmbgRadnika" required>
+                </div>
+                <div class="mb-3">
+                    <label for="nazivTima">Naziv tima:</label>
+                    <input type="text" id="nazivTima" name="nazivTima" required>
+                </div>
+                <div>
+                    <button class="btnDodajRadnikaUTim btn btn-primary btn-lg" type="button">Dodaj radnika u tim</button>
+                </div>
+            </form>
+
+
+            <br/>
+            <br/>
+
+            <h3>Kreiranje prijateljstva između radnika</h3>
+            <form id="dodajPrijateljaForm">
+                <div class="mb-3">
+                    <label for="jmbgPrvogPrijatelja">JMBG prvog radnika:</label>
+                    <input type="text" id="jmbgPrvogPrijatelja" name="jmbgPrvogPrijatelja" required>
+                </div>
+                <div class="mb-3">
+                    <label for="jmbgDrugogPrijatelja">JMBG drugog radnika</label>
+                    <input type="text" id="jmbgDrugogPrijatelja" name="jmbgDrugogPrijatelja" required>
+                </div>
+                <div>
+                    <button class="btnDodajPrijatelja btn btn-primary btn-lg" type="button">Dodaj prijatelja</button>
+                </div>
+            </form>
+
+            <br/>
+            <br/>
+
+            <h3>Predloženi prijatelji</h3>
+            <form id="suggestFriendsForm">
+                <div class="mb-3"></div>
+                    <label for="jmbgPrijateljaZaPredlog">JMBG radnika:</label>
+                    <input type="text" id="jmbgPrijateljaZaPredlog" required>
+                </div>
+                <br/>
+                <br/>
+                <div>
+                    <button class="btnPredloziPrijatelje btn btn-primary btn-lg" type="button">Predloži Prijatelje</button>
+                </div>
+                <br/>
+                <br/>
+                <div id="suggestedFriendsList"></div>
+            </form>
+            
+        
         </section>
         <!-- Call to Action-->
+
         <section class="call-to-action text-white text-center" id="signup">
             <div class="container position-relative">
                 <div class="row justify-content-center">

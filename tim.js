@@ -21,7 +21,7 @@ export const prikaziSveTimove = async(req, res) => {
     } catch(err) {
         return res.status(500).json(err)
     }
-}
+} //uradjeno
 
 export const preporuciTimoveSaradnika = async(req, res) => {
     try {
@@ -121,7 +121,7 @@ export const dodajTim = async(req, res) => {
     } catch(err) {
         return res.status(500).json(err)
     }
-} //samo postoji ali se ne koristi
+} //tim se dodaje dodavanjem projekta, ne postoji posebna forma za to
 
 //obrisi tim - DELETE
 export const obrisiTim = async(req, res) => {
@@ -160,7 +160,7 @@ export const obrisiTim = async(req, res) => {
     } catch (err) {
         return res.status(500).json(err)
     }
-}
+} //uradjeno
 
 //izmeni tim - PUT
 export const izmeniTim = async(req, res) => {
@@ -200,4 +200,4 @@ export const izmeniTim = async(req, res) => {
     } catch (err) {
         return res.status(500).json(err)
     }
-}
+} //uradjeno

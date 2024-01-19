@@ -185,6 +185,27 @@ const prikaziSveRadnike = async () => {
     }
 }
 
+const postaviSefaZaSektor = async (jmbg, naziv) => {
+    try {
+        const response = await fetch('http://localhost:8080/postavisefazasektor', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ Naziv: naziv, JMBG: jmbg }),
+        });
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Postavljen sef:', data);
+        } else {
+            console.error('Failed to postaviSefa:', response.statusText);
+        }
+        return response
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
 const prikaziSveSektore = async () => {
     try {
         const response = await fetch('http://localhost:8080/prikazisvesektore');
@@ -335,6 +356,76 @@ const obrisiProjekat = async (naziv) => {
     }
 }
 
+// const prikaziSveRadnikeSektora = async (naziv) => {
+//     try {
+//         const response = await fetch('http://localhost:8080/prikaziradnikesektora', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//             },
+//             body: JSON.stringify({ Naziv: naziv }),
+//         });
+
+//         if (response.ok) {
+//             const data = await response.json();
+//             console.log(`Prikazi Radnike Sektora '${naziv}':`, data);
+//             let existingTable = document.getElementById(`radniciSektora${naziv}`);
+
+//             if (existingTable) {
+//                 existingTable.remove();
+//             }
+//             // Create a table for displaying worker attributes
+//             const table = document.createElement('table');
+//             table.id = `radniciSektora${naziv}`
+//             table.border = '1';
+
+//             // Create the table header
+//             const thead = table.createTHead();
+//             const headerRow = thead.insertRow();
+//             ['JMBG', 'Ime', 'Prezime', 'Email'].forEach(headerText => {
+//                 const th = document.createElement('th');
+//                 th.textContent = headerText;
+//                 th.classList.add('text-dark'); // Added text-dark class to the header cell
+//                 headerRow.appendChild(th);
+//             });
+
+//             // Create the table body and populate it with worker data
+//             const tbody = document.createElement('tbody');
+//             data.forEach(worker => {
+//                 const row = tbody.insertRow();
+//                 const cell1 = row.insertCell(0);
+//                 const cell2 = row.insertCell(1);
+//                 const cell3 = row.insertCell(2);
+//                 const cell4 = row.insertCell(3);
+
+//                 // Set class for the cells
+//                 cell1.classList.add('text-dark');
+//                 cell2.classList.add('text-dark');
+//                 cell3.classList.add('text-dark');
+//                 cell4.classList.add('text-dark');
+
+//                 cell1.textContent = worker.JMBG;
+//                 cell2.textContent = worker.Ime;
+//                 cell3.textContent = worker.Prezime;
+//                 cell4.textContent = worker.Email;
+//             });
+
+//             // Append the table to the body
+//             table.appendChild(thead);
+//             table.appendChild(tbody);
+
+//             const roditelj = document.querySelector(`.${naziv}`)
+
+//             roditelj.appendChild(table);
+
+//         } else {
+//             console.error('Failed to fetch Radnici Sektora:', response.statusText);
+//         }
+//     } catch (error) {
+//         console.error('Error:', error);
+//     }
+// }
+
 const prikaziSveRadnikeSektora = async (naziv) => {
     try {
         const response = await fetch('http://localhost:8080/prikaziradnikesektora', {
@@ -361,7 +452,7 @@ const prikaziSveRadnikeSektora = async (naziv) => {
             // Create the table header
             const thead = table.createTHead();
             const headerRow = thead.insertRow();
-            ['Ime', 'Prezime', 'Email'].forEach(headerText => {
+            ['JMBG', 'Ime', 'Prezime', 'Email', 'Dodaj šefa'].forEach(headerText => {
                 const th = document.createElement('th');
                 th.textContent = headerText;
                 th.classList.add('text-dark'); // Added text-dark class to the header cell
@@ -375,15 +466,42 @@ const prikaziSveRadnikeSektora = async (naziv) => {
                 const cell1 = row.insertCell(0);
                 const cell2 = row.insertCell(1);
                 const cell3 = row.insertCell(2);
+                const cell4 = row.insertCell(3);
+                const cell5 = row.insertCell(4);
 
                 // Set class for the cells
                 cell1.classList.add('text-dark');
                 cell2.classList.add('text-dark');
                 cell3.classList.add('text-dark');
+                cell4.classList.add('text-dark');
+                cell5.classList.add('text-dark');
 
-                cell1.textContent = worker.Ime;
-                cell2.textContent = worker.Prezime;
-                cell3.textContent = worker.Email;
+                cell1.textContent = worker.JMBG;
+                cell2.textContent = worker.Ime;
+                cell3.textContent = worker.Prezime;
+                cell4.textContent = worker.Email;
+
+                // Add "Dodaj šefa" button
+                const addButton = document.createElement('button');
+                addButton.textContent = 'Dodaj šefa';
+                addButton.addEventListener('click', async (event) => {
+                    event.preventDefault()
+                    // Call the function to add the manager here
+                    const response = await postaviSefaZaSektor(worker.JMBG, naziv);
+                    if (response.status === 200) {
+                        // Success: Refresh the displayed workers
+                        alert('Šef za ovaj sektor je uspešno postavljen!')
+                        prikaziSveRadnikeSektora(naziv);
+                    } else if (response.status === 400) {
+                        // Sector already has a manager
+                        alert('Ovaj sektor već ima šefa.');
+                    } else {
+                        // Handle other error cases
+                        alert('Greška prilikom dodavanja šefa.');
+                    }
+                });
+
+                cell5.appendChild(addButton);
             });
 
             // Append the table to the body
@@ -589,6 +707,172 @@ const prikaziSveProjekte = async () => {
     }
 };
 
+const izmeniTim = async (naziv, status) => {
+    try {
+        const response = await fetch('http://localhost:8080/izmenitim', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                Naziv: naziv,
+                Status: status
+            })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Izmeni tim:', data);
+        } else {
+            console.error('Failed to update tim:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+const obrisiTim = async (naziv) => {
+    try {
+        console.log(naziv)
+        const response = await fetch('http://localhost:8080/obrisitim', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({Naziv: naziv}),
+        });
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Obrisi tim:', data);
+            prikaziSveTimove()
+        } else {
+            console.error('Failed to delete tim:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+const prikaziSveTimove = async () => {
+    try {
+        const existingTable = document.getElementById('timoviTable');
+        console.log('TABELA')
+        console.log(existingTable)
+        if (existingTable) {
+            existingTable.remove();
+        }
+
+        const response = await fetch('http://localhost:8080/prikazisvetimove');
+        if (response.ok) {
+            const data = await response.json();
+            // Create the table
+            const table = document.createElement('table');
+            table.id = 'timoviTable';
+            table.border = '1';
+
+            // Create the table header
+            const thead = table.createTHead();
+            const headerRow = thead.insertRow();
+            ['Naziv_tima', 'Status_tima'].forEach(headerText => {
+                const th = document.createElement('th');
+                th.textContent = headerText;
+                headerRow.appendChild(th);
+            });
+
+            // Create the table body and populate it with project data
+            const tbody = document.createElement('tbody');
+            data.forEach(tim => {
+                const row = tbody.insertRow();
+
+                // Create phone number input field for editing
+                const statusInput = document.createElement('input');
+                statusInput.type = 'text';
+                statusInput.value = tim['Status'];
+
+                row.insertCell(0).textContent = tim.Naziv;
+                row.insertCell(1).appendChild(statusInput);
+
+                // Add delete button with trash bin icon
+                const deleteButton = document.createElement('button');
+                deleteButton.innerHTML = '<i class="bi bi-trash"></i>';
+                deleteButton.addEventListener('click', async () => {
+                    obrisiTim(tim.Naziv);
+                    // After deletion, refresh the displayed projects
+                    console.log('TIM OBRISAN')
+                    //prikaziSveTimove();
+                });
+
+                // Add edit button with pencil icon
+                const editButton = document.createElement('button');
+                editButton.innerHTML = '<i class="bi bi-pencil"></i>';
+                editButton.addEventListener('click', () => {
+                    statusInput.disabled = false;
+                    saveButton.style.display = 'inline';
+                });
+
+                // Create save button for saving changes
+                const saveButton = document.createElement('button');
+                saveButton.innerHTML = 'Save';
+                saveButton.style.display = 'none';
+                saveButton.addEventListener('click', () => {
+                    izmeniTim(
+                        tim.Naziv,
+                        statusInput.value
+                    );
+                    statusInput.disabled = true;
+                    saveButton.style.display = 'none';
+                });
+
+                // Create cell for actions
+                const actionsCell = row.insertCell(2);
+                actionsCell.appendChild(deleteButton);
+                actionsCell.appendChild(editButton);
+                actionsCell.appendChild(saveButton);
+
+                statusInput.disabled = true;
+            });
+
+            // Append the table to the body
+            table.appendChild(thead);
+            table.appendChild(tbody);
+
+            const roditelj = document.querySelector('.roditeljskaKlasaTimovi')
+
+            roditelj.appendChild(table);
+        } else {
+            console.error('Failed to fetch timovi:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+};
+
+const dodajNovogPrijatelja = async (jmbg1, jmbg2) => {
+    try {
+        const obj = {
+            JMBG1: jmbg1,
+            JMBG2: jmbg2
+        }
+
+        const response = await fetch('http://localhost:8080/dodajprijatelja', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(obj)
+        });
+
+        if (response.ok) {
+            alert('Dodat je novi prijatelj!')
+
+        } else {
+            console.error('Failed to update tim:', response.statusText);
+        }
+    } catch {
+
+    }
+}
+
 
 
 // Create trash bin button for deleting a worker
@@ -618,6 +902,10 @@ const btnObrisiSektor = document.querySelector('.btnObrisiSektor')
 const btnDodajRadnika = document.querySelector('.btnDodajRadnika')
 const btnPrikaziProjekte = document.querySelector('.btnPrikaziProjekte')
 const btnDodajProjekat = document.querySelector('.dodajProjekatBtn')
+const btnPrikaziTimove = document.querySelector('.btnPrikaziTimove')
+const btnDodajRadnikaUTim = document.querySelector('.btnDodajRadnikaUTim')
+const btnDodajPrijatelja = document.querySelector('.btnDodajPrijatelja')
+const btnPredloziPrijatelje = document.querySelector('.btnPredloziPrijatelje')
 
 btnPrikaziRadnike.addEventListener('click', (event) => {
     event.preventDefault()
@@ -696,10 +984,170 @@ btnDodajProjekat.addEventListener('click', async (event) => {
 
     if (response.ok) {
         // Project added successfully, you may want to handle the response
-        console.log('Projekat uspesno dodat i povezan sa timom');
+        alert('Projekat uspesno dodat i povezan sa timom');
         // You can also refresh the displayed projects
         prikaziSveProjekte();
     } else {
         console.error('Failed to add Projekat:', response.statusText);
+    }
+})
+
+btnPrikaziTimove.addEventListener('click', (event) => {
+    event.preventDefault()
+    prikaziSveTimove()
+})
+
+btnDodajRadnikaUTim.addEventListener('click', async (event) => {
+    event.preventDefault()
+    const nazivTima = document.getElementById('nazivTima').value;
+    const JMBGRadnika = document.getElementById('jmbgRadnika').value
+
+    if (nazivTima.trim() !== '' && JMBGRadnika.length == 13) {
+        // Call dodajSektor with the input value as a parameter
+        const obj = {
+            JMBG: JMBGRadnika,
+            Naziv: nazivTima
+        }
+
+        const response = await fetch('http://localhost:8080/dodajradnikautim', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(obj)
+        });
+
+        if (response.status === 200) {
+            // Success: Refresh the displayed workers
+            alert('Radnik je uspešno dodat u tim')
+        } else if (response.status === 400) {
+            // Sector already has a manager
+            //alert('Radnik već pripada ovom timu.');
+            const odg = await response.json()
+            alert(odg)
+        } else {
+            // Handle other error cases
+            const odg = await response.json()
+            alert(odg)
+        }
+    } else {
+        // Alert or handle the case where the input is empty
+        alert('Please enter a valid Naziv tima and JMBG.');
+    }
+})
+
+btnDodajPrijatelja.addEventListener('click', async (event) => {
+    event.preventDefault()
+    const jmbg1 = document.getElementById('jmbgPrvogPrijatelja').value;
+    const jmbg2 = document.getElementById('jmbgDrugogPrijatelja').value
+
+    if (jmbg1.length == 13 && jmbg2.length == 13) {
+        // Call dodajSektor with the input value as a parameter
+        const obj = {
+            JMBG1: jmbg1,
+            JMBG2: jmbg2
+        }
+
+        const response = await fetch('http://localhost:8080/dodajprijatelja', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(obj)
+        });
+
+        if (response.status === 200) {
+            // Success: Refresh the displayed workers
+            alert('Radnici su postali prijatelji')
+        } else if (response.status === 400) {
+            // Sector already has a manager
+            alert('Radnici su već prijatelji.');
+        } else {
+            // Handle other error cases
+            alert('Greška prilikom sklapanja prijateljstva.');
+        }
+    } else {
+        // Alert or handle the case where the input is empty
+        alert('Please enter a valid Naziv tima and JMBG.');
+    }
+})
+
+btnPredloziPrijatelje.addEventListener('click', async (event) => {
+    event.preventDefault()
+    const jmbg1 = document.getElementById('jmbgPrijateljaZaPredlog').value;
+
+    if (jmbg1.length == 13) {
+        // Call dodajSektor with the input value as a parameter
+        const obj = {
+            JMBG: jmbg1
+        }
+
+        const response = await fetch('http://localhost:8080/predloziprijatelja', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(obj)
+        });
+
+        if (response.status === 200) {
+            const existingTable = document.getElementById('tabelaZaPredlogePrijatelja');
+            if (existingTable) {
+                existingTable.remove();
+            }
+            //pravljenje tabele
+            const data = await response.json();
+        
+            const table = document.createElement('table');
+            table.border = '1';
+            table.id = 'tabelaZaPredlogePrijatelja'
+
+            // Create the table header
+            const thead = table.createTHead();
+            const headerRow = thead.insertRow();
+            ['JMBG', 'Ime', 'Prezime', 'Dodaj prijatelja'].forEach(headerText => {
+                const th = document.createElement('th');
+                th.textContent = headerText;
+                headerRow.appendChild(th);
+            });
+
+            // Create the table body and populate it with friend suggestions
+            const tbody = document.createElement('tbody');
+            data.forEach(worker => {
+                const row = tbody.insertRow();
+                row.insertCell(0).textContent = worker.JMBG;
+                row.insertCell(1).textContent = worker.Ime;
+                row.insertCell(2).textContent = worker.Prezime;
+
+                // Add "Dodaj prijatelja" button
+                const addButton = document.createElement('button');
+                addButton.textContent = 'Dodaj prijatelja';
+                addButton.addEventListener('click', async (event) => {
+                    event.preventDefault()
+                    dodajNovogPrijatelja(jmbg1, worker.JMBG);
+                });
+
+                // Create cell for the button
+                const buttonCell = row.insertCell(3);
+                buttonCell.appendChild(addButton);
+            });
+
+            // Append the table to the body
+            table.appendChild(thead);
+            table.appendChild(tbody);
+
+            // Append the table to the HTML document
+            const roditelj = document.getElementById('suggestedFriendsList')
+            roditelj.appendChild(table);
+        } else if (response.status === 404) {
+            const data = await response.json();
+            alert(data);
+        } else {
+            // Handle other error cases
+            alert('Greška prilikom traženja predloga.');
+        }
+    } else {
+        // Alert or handle the case where the input is empty
+        alert('Please enter a valid JMBG.');
     }
 })

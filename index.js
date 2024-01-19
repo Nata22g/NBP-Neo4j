@@ -11,7 +11,7 @@ const app = express()
 app.use(express.json())
 app.use(cors());
 
-const driver = _driver('bolt://127.0.0.1:7687', auth.basic('neo4j', 'NataSekiVasa'))
+const driver = _driver('bolt://127.0.0.1:7687', auth.basic('neo4j', 'neo4jneo4j')) //NataSekiVasa
 export const session = driver.session({ database: 'neo4j' })
 
 app.get('/', (req, res) => {

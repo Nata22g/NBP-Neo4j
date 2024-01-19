@@ -174,7 +174,7 @@ export const postaviSefaZaSektor = async (req, res) => {
     } catch (err) {
       return res.status(500).json(err);
     }
-}
+} //uradjeno
   
 export const dodajRadnikaUTim = async(req, res) => {
     try { 
@@ -206,7 +206,7 @@ export const dodajRadnikaUTim = async(req, res) => {
     } catch(err) {
         return res.status(500).json(err)
     }
-}
+} //uradjeno
 
 export const predloziPrijatelja = async(req, res) => {
     try { 
@@ -218,10 +218,16 @@ export const predloziPrijatelja = async(req, res) => {
                                 WHERE (r2)-[:JE_PRIJATELJ]-(r3) AND r1<>r3 AND NOT (r1)-[:JE_PRIJATELJ]-(r3)
                                 RETURN r3`
 
+        const query2 = `MATCH (r1:Radnik {JMBG: '${req.body.JMBG}'})-[:JE_PRIJATELJ]-(r2:Radnik)-[:JE_PRIJATELJ]-(r3:Radnik)
+        WHERE r1 <> r3 AND NOT (r1)-[:JE_PRIJATELJ]-(r3)
+        RETURN DISTINCT r3`
+
         await session
-                .run(query)
+                .run(query2)
                 .then(result => {
-                    //console.log(`Broj zaposlenih u sektoru '${req.body.Sektor}': ${result.records[0]._fields[0]}`);
+                    result.records.forEach(record => {
+                        moguciPrijatelji.push(record._fields[0].properties)
+                    });
                 })
                 .catch(err => {
                     console.log(err);
@@ -235,7 +241,7 @@ export const predloziPrijatelja = async(req, res) => {
     } catch(err) {
         return res.status(500).json(err)
     }
-}
+} //uradjeno
 
 // DELETE
 export const obrisiRadnika = async(req, res) => {
@@ -367,9 +373,9 @@ export const dodajPrijatelja = async(req, res) => {
 
             return res.status(200).json(radnici)
         } else{
-            return res.status(400).json("Već ste prijatlj sa odabranim korisnikom")
+            return res.status(400).json("Već ste prijatelj sa odabranim korisnikom")
         }
     } catch(err){
         return res.status(500).json(err)
     }
-}
+} //uradjeno
