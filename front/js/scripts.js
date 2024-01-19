@@ -864,15 +864,78 @@ const dodajNovogPrijatelja = async (jmbg1, jmbg2) => {
 
         if (response.ok) {
             alert('Dodat je novi prijatelj!')
+            const response1 = await fetch('http://localhost:8080/predloziprijatelja', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({JMBG: jmbg1})
+            });
+
+            napraviTabelu(response1)
 
         } else {
             console.error('Failed to update tim:', response.statusText);
         }
-    } catch {
-
+    } catch (error) {
+        console.error('Error:', error);
     }
 }
 
+const napraviTabelu = async (response, jmbg1) => {
+    try {
+        const existingTable = document.getElementById('tabelaZaPredlogePrijatelja');
+        if (existingTable) {
+            existingTable.remove();
+        }
+        //pravljenje tabele
+        const data = await response.json();
+    
+        const table = document.createElement('table');
+        table.border = '1';
+        table.id = 'tabelaZaPredlogePrijatelja'
+
+        // Create the table header
+        const thead = table.createTHead();
+        const headerRow = thead.insertRow();
+        ['JMBG', 'Ime', 'Prezime', 'Dodaj prijatelja'].forEach(headerText => {
+            const th = document.createElement('th');
+            th.textContent = headerText;
+            headerRow.appendChild(th);
+        });
+
+        // Create the table body and populate it with friend suggestions
+        const tbody = document.createElement('tbody');
+        data.forEach(worker => {
+            const row = tbody.insertRow();
+            row.insertCell(0).textContent = worker.JMBG;
+            row.insertCell(1).textContent = worker.Ime;
+            row.insertCell(2).textContent = worker.Prezime;
+
+            // Add "Dodaj prijatelja" button
+            const addButton = document.createElement('button');
+            addButton.textContent = 'Dodaj prijatelja';
+            addButton.addEventListener('click', async (event) => {
+                event.preventDefault()
+                dodajNovogPrijatelja(jmbg1, worker.JMBG);
+            });
+
+            // Create cell for the button
+            const buttonCell = row.insertCell(3);
+            buttonCell.appendChild(addButton);
+        });
+
+        // Append the table to the body
+        table.appendChild(thead);
+        table.appendChild(tbody);
+
+        // Append the table to the HTML document
+        const roditelj = document.getElementById('suggestedFriendsList')
+        roditelj.appendChild(table);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
 
 
 // Create trash bin button for deleting a worker
@@ -1091,54 +1154,7 @@ btnPredloziPrijatelje.addEventListener('click', async (event) => {
         });
 
         if (response.status === 200) {
-            const existingTable = document.getElementById('tabelaZaPredlogePrijatelja');
-            if (existingTable) {
-                existingTable.remove();
-            }
-            //pravljenje tabele
-            const data = await response.json();
-        
-            const table = document.createElement('table');
-            table.border = '1';
-            table.id = 'tabelaZaPredlogePrijatelja'
-
-            // Create the table header
-            const thead = table.createTHead();
-            const headerRow = thead.insertRow();
-            ['JMBG', 'Ime', 'Prezime', 'Dodaj prijatelja'].forEach(headerText => {
-                const th = document.createElement('th');
-                th.textContent = headerText;
-                headerRow.appendChild(th);
-            });
-
-            // Create the table body and populate it with friend suggestions
-            const tbody = document.createElement('tbody');
-            data.forEach(worker => {
-                const row = tbody.insertRow();
-                row.insertCell(0).textContent = worker.JMBG;
-                row.insertCell(1).textContent = worker.Ime;
-                row.insertCell(2).textContent = worker.Prezime;
-
-                // Add "Dodaj prijatelja" button
-                const addButton = document.createElement('button');
-                addButton.textContent = 'Dodaj prijatelja';
-                addButton.addEventListener('click', async (event) => {
-                    event.preventDefault()
-                    dodajNovogPrijatelja(jmbg1, worker.JMBG);
-                });
-
-                // Create cell for the button
-                const buttonCell = row.insertCell(3);
-                buttonCell.appendChild(addButton);
-            });
-
-            // Append the table to the body
-            table.appendChild(thead);
-            table.appendChild(tbody);
-
-            // Append the table to the HTML document
-            const roditelj = document.getElementById('suggestedFriendsList')
-            roditelj.appendChild(table);
+            napraviTabelu(response, jmbg1)
         } else if (response.status === 404) {
             const data = await response.json();
             alert(data);
