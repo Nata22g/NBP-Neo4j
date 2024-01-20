@@ -1,4 +1,3 @@
-// script.js
 
 const dodajRadnika = async (ime, prezime, jmbg, godinaRodjenja, email, brojTelefona, nazivSektora) => {
     try {
@@ -37,7 +36,6 @@ const obrisiRadnika = async (jmbg) => {
         const radnik = {
             JMBG: jmbg
         }
-
         const response = await fetch('http://localhost:8080/obrisiradnika', {
             method: 'DELETE',
             headers: {
@@ -49,7 +47,6 @@ const obrisiRadnika = async (jmbg) => {
         if (response.ok) {
             const data = await response.json();
             console.log('Obrisi Radnika:', data);
-            // Refresh the table after deletion
             prikaziSveRadnike();
         } else {
             console.error('Failed to delete Radnik:', response.statusText);
@@ -99,7 +96,6 @@ const prikaziSveRadnike = async () => {
             table.id = 'workerTable';
             table.border = '1';
 
-            // Create the table header
             const thead = table.createTHead();
             const headerRow = thead.insertRow();
             ['Ime', 'Prezime', 'JMBG', 'Email', 'Broj telefona'].forEach(headerText => {
@@ -108,7 +104,6 @@ const prikaziSveRadnike = async () => {
                 headerRow.appendChild(th);
             });
 
-            // Create the table body and populate it with worker data
             const tbody = document.createElement('tbody');
             data.forEach(worker => {
                 const row = tbody.insertRow();
@@ -116,24 +111,20 @@ const prikaziSveRadnike = async () => {
                 row.insertCell(1).textContent = worker.Prezime;
                 row.insertCell(2).textContent = worker.JMBG;
 
-                // Create email input field for editing
                 const emailInput = document.createElement('input');
                 emailInput.type = 'text';
                 emailInput.value = worker.Email;
 
-                // Create phone number input field for editing
                 const brojTelefonaInput = document.createElement('input');
                 brojTelefonaInput.type = 'text';
                 brojTelefonaInput.value = worker['Broj_telefona'];
 
-                // Create trash bin button for deleting a worker
                 const deleteButton = document.createElement('button');
                 deleteButton.innerHTML = '<i class="bi bi-trash"></i>';
                 deleteButton.addEventListener('click', () => {
                     obrisiRadnika(worker.JMBG);
                 });
 
-                // Create pencil button for editing email and phone number fields
                 const editButton = document.createElement('button');
                 editButton.innerHTML = '<i class="bi bi-pencil"></i>';
                 editButton.addEventListener('click', () => {
@@ -142,7 +133,6 @@ const prikaziSveRadnike = async () => {
                     saveButton.style.display = 'inline';
                 });
 
-                // Create save button for saving changes
                 const saveButton = document.createElement('button');
                 saveButton.innerHTML = 'Save';
                 saveButton.style.display = 'none';
@@ -157,7 +147,6 @@ const prikaziSveRadnike = async () => {
                     saveButton.style.display = 'none';
                 });
 
-                // Append elements to table row
                 row.insertCell(3).appendChild(emailInput);
                 row.insertCell(4).appendChild(brojTelefonaInput);
                 const actionsCell = row.insertCell(5);
@@ -165,12 +154,10 @@ const prikaziSveRadnike = async () => {
                 actionsCell.appendChild(editButton);
                 actionsCell.appendChild(saveButton);
 
-                // Initially disable the input fields and save button
                 emailInput.disabled = true;
                 brojTelefonaInput.disabled = true;
             });
 
-            // Append the table to the body
             table.appendChild(thead);
             table.appendChild(tbody);
 
@@ -213,72 +200,56 @@ const prikaziSveSektore = async () => {
             const data = await response.json();
             console.log('Prikazi Sve Sektore:', data);
 
-            // Get the container where you want to display the sectors
-            const sectorsContainer = document.getElementById('sectorsContainer');
-
-            // Check if the container already exists, remove it if it does
             const existingContainer = document.getElementById('sectorsContainer');
             if (existingContainer) {
                 existingContainer.remove();
             }
 
-            // Create a new container
             const newSectorsContainer = document.createElement('div');
             newSectorsContainer.id = 'sectorsContainer';
 
             const roditelj = document.querySelector('.divZaSektore')
-            // Append the new container to the body
             roditelj.appendChild(newSectorsContainer);
 
-            // Iterate over each sector and create a container for it
             data.forEach(sektor => {
-                // Create a Bootstrap card for each sector
                 const card = document.createElement('div');
                 card.classList.add('card', 'mb-3');
 
-                // Create card body
                 const cardBody = document.createElement('div');
                 cardBody.classList.add('card-body');
                 cardBody.classList.add(`${sektor.Naziv}`)
 
-                // Add sector attributes to card body
                 const nazivElement = document.createElement('h5');
-                nazivElement.classList.add('card-title', 'text-dark'); // Added text-dark class
+                nazivElement.classList.add('card-title', 'text-dark'); 
                 nazivElement.textContent = `Naziv: ${sektor.Naziv}`;
 
                 const brojZaposlenihElement = document.createElement('p');
-                brojZaposlenihElement.classList.add('card-text', 'text-dark'); // Added text-dark class
+                brojZaposlenihElement.classList.add('card-text', 'text-dark'); 
                 brojZaposlenihElement.textContent = `Broj zaposlenih: ${sektor.Broj_zaposlenih.low}`;
 
-                // Add delete button with trash can icon
                 const deleteButton = document.createElement('button');
-                deleteButton.classList.add('btn', 'btn-danger', 'mx-2'); // Added Bootstrap button classes
+                deleteButton.classList.add('btn', 'btn-danger', 'mx-2'); 
                 deleteButton.innerHTML = '<i class="bi bi-trash"></i>';
                 deleteButton.addEventListener('click', async (event) => {
                     event.preventDefault();
                     await obrisiSektor(sektor.Naziv);
-                    // After deletion, refresh the displayed sectors
                     prikaziSveSektore();
                 });
 
                 const showWorkersButton = document.createElement('button');
-                showWorkersButton.classList.add('btn', 'btn-info', 'mx-2'); // Added Bootstrap button classes
+                showWorkersButton.classList.add('btn', 'btn-info', 'mx-2'); 
                 showWorkersButton.innerHTML = '<i class="bi bi-people"></i>';
                 showWorkersButton.addEventListener('click', async (event) => {
                     event.preventDefault();
                     await prikaziSveRadnikeSektora(sektor.Naziv);
                 });
 
-                // Append elements to card body
                 cardBody.appendChild(nazivElement);
                 cardBody.appendChild(brojZaposlenihElement);
                 cardBody.appendChild(deleteButton);
                 cardBody.appendChild(showWorkersButton);
 
-                // Append card body to card
                 card.appendChild(cardBody);
-
-                // Append card to the new container
                 newSectorsContainer.appendChild(card);
             });
         } else {
@@ -314,7 +285,6 @@ const obrisiSektor = async (naziv) => {
         const sektor = {
             Naziv: naziv
         }
-
 
         const response = await fetch('http://localhost:8080/obrisisektor', {
             method: 'DELETE',
@@ -444,22 +414,19 @@ const prikaziSveRadnikeSektora = async (naziv) => {
             if (existingTable) {
                 existingTable.remove();
             }
-            // Create a table for displaying worker attributes
             const table = document.createElement('table');
             table.id = `radniciSektora${naziv}`
             table.border = '1';
 
-            // Create the table header
             const thead = table.createTHead();
             const headerRow = thead.insertRow();
-            ['JMBG', 'Ime', 'Prezime', 'Email', 'Dodaj šefa'].forEach(headerText => {
+            ['JMBG', 'Ime', 'Prezime', 'Email', 'Izaberi šefa'].forEach(headerText => {
                 const th = document.createElement('th');
                 th.textContent = headerText;
-                th.classList.add('text-dark'); // Added text-dark class to the header cell
+                th.classList.add('text-dark'); 
                 headerRow.appendChild(th);
             });
 
-            // Create the table body and populate it with worker data
             const tbody = document.createElement('tbody');
             data.forEach(worker => {
                 const row = tbody.insertRow();
@@ -469,7 +436,6 @@ const prikaziSveRadnikeSektora = async (naziv) => {
                 const cell4 = row.insertCell(3);
                 const cell5 = row.insertCell(4);
 
-                // Set class for the cells
                 cell1.classList.add('text-dark');
                 cell2.classList.add('text-dark');
                 cell3.classList.add('text-dark');
@@ -481,22 +447,21 @@ const prikaziSveRadnikeSektora = async (naziv) => {
                 cell3.textContent = worker.Prezime;
                 cell4.textContent = worker.Email;
 
-                // Add "Dodaj šefa" button
                 const addButton = document.createElement('button');
                 addButton.textContent = 'Dodaj šefa';
                 addButton.addEventListener('click', async (event) => {
                     event.preventDefault()
-                    // Call the function to add the manager here
+
                     const response = await postaviSefaZaSektor(worker.JMBG, naziv);
                     if (response.status === 200) {
-                        // Success: Refresh the displayed workers
+
                         alert('Šef za ovaj sektor je uspešno postavljen!')
                         prikaziSveRadnikeSektora(naziv);
                     } else if (response.status === 400) {
-                        // Sector already has a manager
+
                         alert('Ovaj sektor već ima šefa.');
                     } else {
-                        // Handle other error cases
+
                         alert('Greška prilikom dodavanja šefa.');
                     }
                 });
@@ -504,7 +469,6 @@ const prikaziSveRadnikeSektora = async (naziv) => {
                 cell5.appendChild(addButton);
             });
 
-            // Append the table to the body
             table.appendChild(thead);
             table.appendChild(tbody);
 
@@ -528,16 +492,13 @@ const populateSektorDropdown = async () => {
         if (response.ok) {
             const data = await response.json();
 
-            // Clear existing options
             dropdown.innerHTML = '';
 
-            // Add default option
             const defaultOption = document.createElement('option');
             defaultOption.text = 'Izaberite sektor';
             defaultOption.value = '';
             dropdown.add(defaultOption);
 
-            // Add options for each sector
             data.forEach(sektor => {
                 const option = document.createElement('option');
                 option.text = sektor.Naziv;
@@ -560,16 +521,13 @@ const populateSektorDropdown2 = async () => {
         if (response.ok) {
             const data = await response.json();
 
-            // Clear existing options
             dropdown.innerHTML = '';
 
-            // Add default option
             const defaultOption = document.createElement('option');
             defaultOption.text = 'Izaberite sektor';
             defaultOption.value = '';
             dropdown.add(defaultOption);
 
-            // Add options for each sector
             data.forEach(sektor => {
                 const option = document.createElement('option');
                 option.text = sektor.Naziv;
@@ -586,7 +544,7 @@ const populateSektorDropdown2 = async () => {
 
 const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString(); // Adjust the format as needed
+    return date.toLocaleDateString();
 };
 
 const izmeniProjekat = async (naziv, status) => {
@@ -623,12 +581,10 @@ const prikaziSveProjekte = async () => {
         const response = await fetch('http://localhost:8080/prikazisveprojekte');
         if (response.ok) {
             const data = await response.json();
-            // Create the table
             const table = document.createElement('table');
             table.id = 'projektiTable';
             table.border = '1';
 
-            // Create the table header
             const thead = table.createTHead();
             const headerRow = thead.insertRow();
             ['Naziv_projekta', 'Status_projekta', 'Budzet', 'Datum_pocetka', 'Rok_izrade', 'Actions'].forEach(headerText => {
@@ -637,12 +593,10 @@ const prikaziSveProjekte = async () => {
                 headerRow.appendChild(th);
             });
 
-            // Create the table body and populate it with project data
             const tbody = document.createElement('tbody');
             data.forEach(projekat => {
                 const row = tbody.insertRow();
 
-                // Create phone number input field for editing
                 const statusInput = document.createElement('input');
                 statusInput.type = 'text';
                 statusInput.value = projekat['Status'];
@@ -653,16 +607,14 @@ const prikaziSveProjekte = async () => {
                 row.insertCell(3).textContent = formatDate(projekat.Datum_pocetka);
                 row.insertCell(4).textContent = formatDate(projekat.Rok_izrade);
 
-                // Add delete button with trash bin icon
                 const deleteButton = document.createElement('button');
                 deleteButton.innerHTML = '<i class="bi bi-trash"></i>';
                 deleteButton.addEventListener('click', async () => {
                     obrisiProjekat(projekat.Naziv);
-                    // After deletion, refresh the displayed projects
+
                     prikaziSveProjekte();
                 });
 
-                // Add edit button with pencil icon
                 const editButton = document.createElement('button');
                 editButton.innerHTML = '<i class="bi bi-pencil"></i>';
                 editButton.addEventListener('click', () => {
@@ -670,7 +622,6 @@ const prikaziSveProjekte = async () => {
                     saveButton.style.display = 'inline';
                 });
 
-                // Create save button for saving changes
                 const saveButton = document.createElement('button');
                 saveButton.innerHTML = 'Save';
                 saveButton.style.display = 'none';
@@ -683,7 +634,6 @@ const prikaziSveProjekte = async () => {
                     saveButton.style.display = 'none';
                 });
 
-                // Create cell for actions
                 const actionsCell = row.insertCell(5);
                 actionsCell.appendChild(deleteButton);
                 actionsCell.appendChild(editButton);
@@ -692,7 +642,6 @@ const prikaziSveProjekte = async () => {
                 statusInput.disabled = true;
             });
 
-            // Append the table to the body
             table.appendChild(thead);
             table.appendChild(tbody);
 
@@ -765,12 +714,10 @@ const prikaziSveTimove = async () => {
         const response = await fetch('http://localhost:8080/prikazisvetimove');
         if (response.ok) {
             const data = await response.json();
-            // Create the table
             const table = document.createElement('table');
             table.id = 'timoviTable';
             table.border = '1';
 
-            // Create the table header
             const thead = table.createTHead();
             const headerRow = thead.insertRow();
             ['Naziv_tima', 'Status_tima'].forEach(headerText => {
@@ -779,12 +726,10 @@ const prikaziSveTimove = async () => {
                 headerRow.appendChild(th);
             });
 
-            // Create the table body and populate it with project data
             const tbody = document.createElement('tbody');
             data.forEach(tim => {
                 const row = tbody.insertRow();
 
-                // Create phone number input field for editing
                 const statusInput = document.createElement('input');
                 statusInput.type = 'text';
                 statusInput.value = tim['Status'];
@@ -792,17 +737,14 @@ const prikaziSveTimove = async () => {
                 row.insertCell(0).textContent = tim.Naziv;
                 row.insertCell(1).appendChild(statusInput);
 
-                // Add delete button with trash bin icon
                 const deleteButton = document.createElement('button');
                 deleteButton.innerHTML = '<i class="bi bi-trash"></i>';
                 deleteButton.addEventListener('click', async () => {
                     obrisiTim(tim.Naziv);
-                    // After deletion, refresh the displayed projects
                     console.log('TIM OBRISAN')
                     //prikaziSveTimove();
                 });
 
-                // Add edit button with pencil icon
                 const editButton = document.createElement('button');
                 editButton.innerHTML = '<i class="bi bi-pencil"></i>';
                 editButton.addEventListener('click', () => {
@@ -810,7 +752,6 @@ const prikaziSveTimove = async () => {
                     saveButton.style.display = 'inline';
                 });
 
-                // Create save button for saving changes
                 const saveButton = document.createElement('button');
                 saveButton.innerHTML = 'Save';
                 saveButton.style.display = 'none';
@@ -823,7 +764,6 @@ const prikaziSveTimove = async () => {
                     saveButton.style.display = 'none';
                 });
 
-                // Create cell for actions
                 const actionsCell = row.insertCell(2);
                 actionsCell.appendChild(deleteButton);
                 actionsCell.appendChild(editButton);
@@ -832,7 +772,6 @@ const prikaziSveTimove = async () => {
                 statusInput.disabled = true;
             });
 
-            // Append the table to the body
             table.appendChild(thead);
             table.appendChild(tbody);
 
@@ -937,15 +876,12 @@ const napraviTabelu = async (response, jmbg1) => {
     }
 }
 
-
-// Create trash bin button for deleting a worker
 const deleteButton = document.createElement('button');
 deleteButton.innerHTML = '<i class="bi bi-trash"></i>';
 deleteButton.addEventListener('click', () => {
     obrisiRadnika(worker.JMBG);
 });
 
-// Create pencil button for editing email and phone number fields
 const editButton = document.createElement('button');
 editButton.innerHTML = '<i class="bi bi-pencil"></i>';
 editButton.addEventListener('click', () => {
@@ -969,16 +905,16 @@ const btnPrikaziTimove = document.querySelector('.btnPrikaziTimove')
 const btnDodajRadnikaUTim = document.querySelector('.btnDodajRadnikaUTim')
 const btnDodajPrijatelja = document.querySelector('.btnDodajPrijatelja')
 const btnPredloziPrijatelje = document.querySelector('.btnPredloziPrijatelje')
+const btnPredlogTimovaSaradnika = document.querySelector('.btnPredlogTimovaSaradnika')
+const btnPredlogTimovaSektora = document.querySelector('.btnPredlogTimovaSektora')
 
 btnPrikaziRadnike.addEventListener('click', (event) => {
     event.preventDefault()
-
     prikaziSveRadnike()
 })
 
 btnPrikaziSektore.addEventListener('click', (event) => {
     event.preventDefault()
-
     prikaziSveSektore()
 })
 
@@ -987,12 +923,9 @@ btnDodajSektor.addEventListener('click', (event) => {
     
     const nazivSektora = document.getElementById('emailAddressBelow').value;
 
-    // Check if the input value is not empty
     if (nazivSektora.trim() !== '') {
-        // Call dodajSektor with the input value as a parameter
         dodajSektor(nazivSektora);
     } else {
-        // Alert or handle the case where the input is empty
         console.log('Please enter a valid Naziv sektora.');
     }
 })
@@ -1008,7 +941,6 @@ btnDodajRadnika.addEventListener('click', (event) => {
     const brojTelefona = document.getElementById('brojTelefona').value;
     const selectedSektor = document.getElementById('nazivSektoraMeni').value;
 
-    // Call the dodajRadnika function with the obtained values
     dodajRadnika(ime, prezime, jmbg, godinaRodjenja, email, brojTelefona, selectedSektor);
 })
 
@@ -1066,7 +998,6 @@ btnDodajRadnikaUTim.addEventListener('click', async (event) => {
     const JMBGRadnika = document.getElementById('jmbgRadnika').value
 
     if (nazivTima.trim() !== '' && JMBGRadnika.length == 13) {
-        // Call dodajSektor with the input value as a parameter
         const obj = {
             JMBG: JMBGRadnika,
             Naziv: nazivTima
@@ -1105,7 +1036,6 @@ btnDodajPrijatelja.addEventListener('click', async (event) => {
     const jmbg2 = document.getElementById('jmbgDrugogPrijatelja').value
 
     if (jmbg1.length == 13 && jmbg2.length == 13) {
-        // Call dodajSektor with the input value as a parameter
         const obj = {
             JMBG1: jmbg1,
             JMBG2: jmbg2
@@ -1140,7 +1070,6 @@ btnPredloziPrijatelje.addEventListener('click', async (event) => {
     const jmbg1 = document.getElementById('jmbgPrijateljaZaPredlog').value;
 
     if (jmbg1.length == 13) {
-        // Call dodajSektor with the input value as a parameter
         const obj = {
             JMBG: jmbg1
         }
@@ -1164,6 +1093,134 @@ btnPredloziPrijatelje.addEventListener('click', async (event) => {
         }
     } else {
         // Alert or handle the case where the input is empty
+        alert('Please enter a valid JMBG.');
+    }
+})
+
+btnPredlogTimovaSaradnika.addEventListener('click', async (event) => {
+    event.preventDefault()
+    const jmbg = document.getElementById('jmbgRadnikaZaTim').value;
+    const nazivTima = document.getElementById('nazivTimaZaTim').value;
+    
+    if (jmbg.length == 13 && nazivTima.trim() !== '') {
+        const obj = {
+            JMBG: jmbg,
+            Naziv: nazivTima
+        }
+
+        const response = await fetch('http://localhost:8080/preporucitimovesaradnika', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(obj)
+        });
+
+        if (response.status === 200) {
+            const existingTable = document.getElementById('timoviTable124');
+            if (existingTable) {
+                existingTable.remove();
+            }
+
+            const data = await response.json();
+            const table = document.createElement('table');
+            table.id = 'timoviTable124';
+            table.border = '1';
+
+            const thead = table.createTHead();
+            const headerRow = thead.insertRow();
+            ['Naziv_tima', 'Status_tima'].forEach(headerText => {
+                const th = document.createElement('th');
+                th.textContent = headerText;
+                headerRow.appendChild(th);
+            });
+
+            const tbody = document.createElement('tbody');
+            data.forEach(tim => {
+                const row = tbody.insertRow();
+
+                row.insertCell(0).textContent = tim.Naziv;
+                row.insertCell(1).textContent = tim.Status;
+            });
+
+            table.appendChild(thead);
+            table.appendChild(tbody);
+
+            const roditelj = document.querySelector('.klasaZaPreporukuSaradnika')
+
+            roditelj.appendChild(table);
+            
+        } else if (response.status === 404) {
+            const data = await response.json();
+            alert(data);
+        } else {
+        
+            alert('Greška prilikom traženja predloga.');
+        }
+    } else {
+        alert('Please enter a valid JMBG.');
+    }
+})
+
+btnPredlogTimovaSektora.addEventListener('click', async (event) => {
+    event.preventDefault()
+    const jmbg = document.getElementById('jmbgRadnikaZaTim').value;
+    
+    if (jmbg.length == 13) {
+        const obj = {
+            JMBG: jmbg
+        }
+
+        const response = await fetch('http://localhost:8080/preporucitimovesektora', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(obj)
+        });
+
+        if (response.status === 200) {
+            const existingTable = document.getElementById('timoviTable125');
+            if (existingTable) {
+                existingTable.remove();
+            }
+
+            const data = await response.json();
+            const table = document.createElement('table');
+            table.id = 'timoviTable125';
+            table.border = '1';
+
+            const thead = table.createTHead();
+            const headerRow = thead.insertRow();
+            ['Naziv_tima', 'Status_tima'].forEach(headerText => {
+                const th = document.createElement('th');
+                th.textContent = headerText;
+                headerRow.appendChild(th);
+            });
+
+            const tbody = document.createElement('tbody');
+            data.forEach(tim => {
+                const row = tbody.insertRow();
+
+                row.insertCell(0).textContent = tim.Naziv;
+                row.insertCell(1).textContent = tim.Status;
+            });
+
+            table.appendChild(thead);
+            table.appendChild(tbody);
+
+            const roditelj = document.querySelector('.klasaZaPreporukuSektora')
+
+            roditelj.appendChild(table);
+            
+        } else if (response.status === 404) {
+            const data = await response.json();
+            alert(data);
+        } else {
+        
+            alert('Greška prilikom traženja predloga.');
+        }
+    } else {
         alert('Please enter a valid JMBG.');
     }
 })

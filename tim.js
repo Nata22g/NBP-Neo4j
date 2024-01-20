@@ -43,12 +43,12 @@ export const preporuciTimoveSaradnika = async(req, res) => {
         if(timovi.length > 0)
             return res.status(200).json(timovi)
         else
-            return ("Već ste član svih timova u kojima su vaši saradnici.")
+            return res.status(404).json("Već ste član svih timova u kojima su vaši saradnici.")
 
     } catch(err) {
         return res.status(500).json(err)
     }
-}
+} //uradjeno
 
 export const preporuciTimoveSektora = async(req, res) => {
     try {
@@ -70,12 +70,12 @@ export const preporuciTimoveSektora = async(req, res) => {
         if(timovi.length > 0)
             return res.status(200).json(timovi)
         else
-            return ("Već ste član svih timova koji rade na projektima iz vašeg sektora.")
+            return res.status(404).json("Već ste član svih timova koji rade na projektima iz vašeg sektora.")
 
     } catch(err) {
         return res.status(500).json(err)
     }
-}
+} //uradjeno
 
 //dodaj tim - POST
 export const dodajTim = async(req, res) => {

@@ -1,0 +1,5 @@
+Nakon što napravite Neo4j bazu, potrebno je promeniti šifru u index.js fajlu pri postavljanju driver-a.
+Komande kojima možete popuniti bazu nalaze se u entry.txt fajlu.
+Za backend koristili smo nodejs. Kad se otvori terminal u folderu NBP Neo4j, potrebno je prvo odraditi komandu npm install kako bi se instalirali svi moduli, a zatim pokrenuti server komandom npm run start.
+Frontend se startuje pokretanjem live server-a početne strane index.html.
+

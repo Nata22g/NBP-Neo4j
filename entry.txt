@@ -1,0 +1,143 @@
+
+ovo prvo:
+CREATE (mar: Sektor {Naziv: 'Marketing', Broj_zaposlenih: 0})
+CREATE (hr: Sektor {Naziv: 'HR', Broj_zaposlenih: 0})
+CREATE (be: Sektor {Naziv: 'Backend', Broj_zaposlenih: 0})
+CREATE (fe: Sektor {Naziv: 'Frontend', Broj_zaposlenih: 0})
+CREATE (dz: Sektor {Naziv: 'Dizajn', Broj_zaposlenih: 0})
+
+CREATE (a: Radnik {Ime: 'Ana', Prezime: 'Ivanović', JMBG: '1234567890123', Godina_rodjenja: 1995, Email: 'ana@gmail.com', Broj_telefona: '0651234567'})
+CREATE (a)-[:RADI_U]->(mar)
+
+CREATE (m: Radnik {Ime: 'Marko', Prezime: 'Petrović', JMBG: '2345678901234', Godina_rodjenja: 1992, Email: 'marko@gmail.com', Broj_telefona: '0652345678'})
+CREATE (m)-[:RADI_U]->(hr)
+
+CREATE (j: Radnik {Ime: 'Jovana', Prezime: 'Nikolić', JMBG: '3456789012345', Godina_rodjenja: 1988, Email: 'jovana@gmail.com', Broj_telefona: '0653456789'})
+CREATE (j)-[:RADI_U]->(be)
+
+CREATE (n: Radnik {Ime: 'Nenad', Prezime: 'Janković', JMBG: '4567890123456', Godina_rodjenja: 1985, Email: 'nenad@gmail.com', Broj_telefona: '0654567890'})
+CREATE (n)-[:RADI_U]->(fe)
+
+CREATE (s: Radnik {Ime: 'Stefan', Prezime: 'Stanković', JMBG: '5678901234567', Godina_rodjenja: 1990, Email: 'stefan@gmail.com', Broj_telefona: '0655678901'})
+CREATE (s)-[:RADI_U]->(dz)
+
+CREATE (i: Radnik {Ime: 'Ivana', Prezime: 'Simić', JMBG: '6789012345678', Godina_rodjenja: 1993, Email: 'ivana@gmail.com', Broj_telefona: '0656789012'})
+CREATE (i)-[:RADI_U]->(mar)
+
+CREATE (d: Radnik {Ime: 'Dusan', Prezime: 'Dimitrijević', JMBG: '7890123456789', Godina_rodjenja: 1996, Email: 'dusan@gmail.com', Broj_telefona: '0657890123'})
+CREATE (d)-[:RADI_U]->(hr)
+
+CREATE (k: Radnik {Ime: 'Katarina', Prezime: 'Kovačević', JMBG: '8901234567890', Godina_rodjenja: 1991, Email: 'katarina@gmail.com', Broj_telefona: '0658901234'})
+CREATE (k)-[:RADI_U]->(be)
+
+CREATE (l: Radnik {Ime: 'Lazar', Prezime: 'Lukić', JMBG: '9012345678901', Godina_rodjenja: 1987, Email: 'lazar@gmail.com', Broj_telefona: '0659012345'})
+CREATE (l)-[:RADI_U]->(fe)
+
+CREATE (t: Radnik {Ime: 'Teodora', Prezime: 'Tomić', JMBG: '0123456789012', Godina_rodjenja: 1994, Email: 'teodora@gmail.com', Broj_telefona: '0650123456'})
+CREATE (t)-[:RADI_U]->(dz)
+
+//ovo će normalno da se povećava kad se radi korišćenjem backend-a
+match (m1:Sektor {Naziv: 'Marketing'}) set m1.Broj_zaposlenih = 2
+match (f1:Sektor {Naziv: 'Frontend'}) set f1.Broj_zaposlenih = 2
+match (b1:Sektor {Naziv: 'Backend'}) set b1.Broj_zaposlenih = 2
+match (h1:Sektor {Naziv: 'HR'}) set h1.Broj_zaposlenih = 2
+match (d1:Sektor {Naziv: 'Dizajn'}) set d1.Broj_zaposlenih = 2
+
+CREATE (t11: Tim {Naziv: 'Projekat1 tim', Status: 'INACTIVE'})
+CREATE (t22: Tim {Naziv: 'Projekat2 tim', Status: 'ACTIVE'})
+CREATE (t33: Tim {Naziv: 'Projekat3 tim', Status: 'ACTIVE'})
+
+CREATE (p11: Projekat {Naziv: 'Projekat1', Status: 'Active', Budzet: '50000', Datum_pocetka: '2022-01-01', Rok_izrade: '2022-12-31'})
+
+CREATE (p2: Projekat {Naziv: 'Projekat2', Status: 'Active', Budzet: '75000', Datum_pocetka: '2022-02-01', Rok_izrade: '2022-11-30'})
+
+CREATE (p3: Projekat {Naziv: 'Projekat3', Status: 'Active', Budzet: '60000', Datum_pocetka: '2022-03-01', Rok_izrade: '2022-10-31'})
+
+
+
+
+
+posle redom:
+
+MATCH (projekat:Projekat {Naziv: 'Projekat1'}), (sektor:Sektor {Naziv: 'Marketing'})
+CREATE (projekat)-[:CILJANI_SEKTOR]->(sektor)
+
+MATCH (projekat2:Projekat {Naziv: 'Projekat2'}), (sektor2:Sektor {Naziv: 'HR'})
+CREATE (projekat2)-[:CILJANI_SEKTOR]->(sektor2)
+
+MATCH (projekat3:Projekat {Naziv: 'Projekat3'}), (sektor3:Sektor {Naziv: 'Backend'})
+CREATE (projekat3)-[:CILJANI_SEKTOR]->(sektor3)
+
+MATCH (t:Tim {Naziv: 'Projekat1 tim'}),(p:Projekat {Naziv: 'Projekat1'})
+CREATE (t)-[:RADI_NA]->(p);
+
+MATCH (t:Tim {Naziv: 'Projekat2 tim'}),(p:Projekat {Naziv: 'Projekat2'})
+CREATE (t)-[:RADI_NA]->(p);
+
+MATCH (t:Tim {Naziv: 'Projekat3 tim'}),(p:Projekat {Naziv: 'Projekat3'})
+CREATE (t)-[:RADI_NA]->(p);
+
+
+
+MATCH (r1:Radnik {JMBG: '6789012345678'}), (r2:Radnik {JMBG: '7890123456789'})
+CREATE (r1)-[:JE_PRIJATELJ]->(r2)
+RETURN r1, r2
+
+MATCH (r1:Radnik {JMBG: '8901234567890'}), (r2:Radnik {JMBG: '0123456789012'})
+CREATE (r1)-[:JE_PRIJATELJ]->(r2)
+RETURN r1, r2
+
+MATCH (r1:Radnik {JMBG: '1234567890123'}), (r2:Radnik {JMBG: '3456789012345'})
+CREATE (r1)-[:JE_PRIJATELJ]->(r2)
+RETURN r1, r2
+
+MATCH (r:Radnik {JMBG: '5678901234567'}), (t:Tim {Naziv: 'Projekat1 tim'}) 
+CREATE (r)-[:JE_CLAN]->(t)
+CREATE (t)-[:SADRZI_CLANA]->(r)
+RETURN r, t
+
+MATCH (r:Radnik {JMBG: '1234567890123'}), (t:Tim {Naziv: 'Projekat1 tim'}) 
+CREATE (r)-[:JE_CLAN]->(t)
+CREATE (t)-[:SADRZI_CLANA]->(r)
+RETURN r, t
+
+MATCH (r:Radnik {JMBG: '4567890123456'}), (t:Tim {Naziv: 'Projekat2 tim'}) 
+CREATE (r)-[:JE_CLAN]->(t)
+CREATE (t)-[:SADRZI_CLANA]->(r)
+RETURN r, t
+
+MATCH (r:Radnik {JMBG: '0123456789012'}), (t:Tim {Naziv: 'Projekat2 tim'}) 
+CREATE (r)-[:JE_CLAN]->(t)
+CREATE (t)-[:SADRZI_CLANA]->(r)
+RETURN r, t
+
+MATCH (r:Radnik {JMBG: '7890123456789'}), (t:Tim {Naziv: 'Projekat3 tim'}) 
+CREATE (r)-[:JE_CLAN]->(t)
+CREATE (t)-[:SADRZI_CLANA]->(r)
+RETURN r, t
+
+MATCH (r:Radnik {JMBG: '9012345678901'}), (t:Tim {Naziv: 'Projekat3 tim'}) 
+CREATE (r)-[:JE_CLAN]->(t)
+CREATE (t)-[:SADRZI_CLANA]->(r)
+RETURN r, t
+
+MATCH (r:Radnik {JMBG: '2345678901234'}), (t:Tim {Naziv: 'Projekat3 tim'}) 
+CREATE (r)-[:JE_CLAN]->(t)
+CREATE (t)-[:SADRZI_CLANA]->(r)
+RETURN r, t
+
+
+MATCH (r:Radnik {JMBG: '1234567890123'})
+MATCH (s:Sektor {Naziv: 'Marketing'})
+CREATE (s)-[:IMA_SEFA]->(r)
+RETURN r, s
+
+MATCH (r:Radnik {JMBG: '7890123456789'})
+MATCH (s:Sektor {Naziv: 'HR'})
+CREATE (s)-[:IMA_SEFA]->(r)
+RETURN r, s
+
+MATCH (r:Radnik {JMBG: '4567890123456'})
+MATCH (s:Sektor {Naziv: 'Frontend'})
+CREATE (s)-[:IMA_SEFA]->(r)
+RETURN r, s

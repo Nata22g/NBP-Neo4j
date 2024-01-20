@@ -11,7 +11,7 @@ const app = express()
 app.use(express.json())
 app.use(cors());
 
-const driver = _driver('bolt://127.0.0.1:7687', auth.basic('neo4j', 'neo4jneo4j')) //NataSekiVasa
+const driver = _driver('bolt://127.0.0.1:7687', auth.basic('neo4j', 'novanova')) //PROMENITE U SKLADU SA VAŠOM BAZOM
 export const session = driver.session({ database: 'neo4j' })
 
 app.get('/', (req, res) => {
@@ -36,8 +36,8 @@ app.delete('/obrisisektor', obrisiSektor)
 
 //tim
 app.get('/prikazisvetimove', prikaziSveTimove)
-app.get('/preporucitimovesaradnika', preporuciTimoveSaradnika)
-app.get('/preporucitimovesektora', preporuciTimoveSektora)
+app.put('/preporucitimovesaradnika', preporuciTimoveSaradnika)  //get nema req.body
+app.put('/preporucitimovesektora', preporuciTimoveSektora)
 app.post('/dodajtim', dodajTim)
 app.delete('/obrisitim', obrisiTim)
 app.put('/izmenitim', izmeniTim)
