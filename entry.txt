@@ -37,15 +37,6 @@ CREATE (t: Radnik {Ime: 'Teodora', Prezime: 'Tomić', JMBG: '0123456789012', God
 CREATE (t)-[:RADI_U]->(dz)
 
 
-//ovo će normalno da se povećava kad se radi korišćenjem backend-a ali kad je preko baze mora ručno
-
-match (m1:Sektor {Naziv: 'Marketing'}) set m1.Broj_zaposlenih = 2
-match (f1:Sektor {Naziv: 'Frontend'}) set f1.Broj_zaposlenih = 2
-match (b1:Sektor {Naziv: 'Backend'}) set b1.Broj_zaposlenih = 2
-match (h1:Sektor {Naziv: 'HR'}) set h1.Broj_zaposlenih = 2
-match (d1:Sektor {Naziv: 'Dizajn'}) set d1.Broj_zaposlenih = 2
-
-
 CREATE (t11: Tim {Naziv: 'Projekat1 tim', Status: 'INACTIVE'})
 CREATE (t22: Tim {Naziv: 'Projekat2 tim', Status: 'ACTIVE'})
 CREATE (t33: Tim {Naziv: 'Projekat3 tim', Status: 'ACTIVE'})
@@ -92,6 +83,14 @@ MATCH (r1:Radnik {JMBG: '1234567890123'}), (r2:Radnik {JMBG: '3456789012345'})
 CREATE (r1)-[:JE_PRIJATELJ]->(r2)
 RETURN r1, r2
 
+MATCH (r1:Radnik {JMBG: '9012345678901'}), (r2:Radnik {JMBG: '7890123456789'})
+CREATE (r1)-[:JE_PRIJATELJ]->(r2)
+RETURN r1, r2
+
+MATCH (r1:Radnik {JMBG: '9012345678901'}), (r2:Radnik {JMBG: '8901234567890'})
+CREATE (r1)-[:JE_PRIJATELJ]->(r2)
+RETURN r1, r2
+
 MATCH (r:Radnik {JMBG: '5678901234567'}), (t:Tim {Naziv: 'Projekat1 tim'}) 
 CREATE (r)-[:JE_CLAN]->(t)
 CREATE (t)-[:SADRZI_CLANA]->(r)
@@ -122,7 +121,22 @@ CREATE (r)-[:JE_CLAN]->(t)
 CREATE (t)-[:SADRZI_CLANA]->(r)
 RETURN r, t
 
+MATCH (r:Radnik {JMBG: '9012345678901'}), (t:Tim {Naziv: 'Projekat1 tim'}) 
+CREATE (r)-[:JE_CLAN]->(t)
+CREATE (t)-[:SADRZI_CLANA]->(r)
+RETURN r, t
+
+MATCH (r:Radnik {JMBG: '9012345678901'}), (t:Tim {Naziv: 'Projekat2 tim'}) 
+CREATE (r)-[:JE_CLAN]->(t)
+CREATE (t)-[:SADRZI_CLANA]->(r)
+RETURN r, t
+
 MATCH (r:Radnik {JMBG: '2345678901234'}), (t:Tim {Naziv: 'Projekat3 tim'}) 
+CREATE (r)-[:JE_CLAN]->(t)
+CREATE (t)-[:SADRZI_CLANA]->(r)
+RETURN r, t
+
+MATCH (r:Radnik {JMBG: '2345678901234'}), (t:Tim {Naziv: 'Projekat2 tim'}) 
 CREATE (r)-[:JE_CLAN]->(t)
 CREATE (t)-[:SADRZI_CLANA]->(r)
 RETURN r, t
@@ -142,3 +156,12 @@ MATCH (r:Radnik {JMBG: '4567890123456'})
 MATCH (s:Sektor {Naziv: 'Frontend'})
 CREATE (s)-[:IMA_SEFA]->(r)
 RETURN r, s
+
+//ovo će normalno da se povećava kad se radi korišćenjem backend-a ali kad je preko baze mora ručno
+//takodje jedno po jedno
+
+match (m1:Sektor {Naziv: 'Marketing'}) set m1.Broj_zaposlenih = 2
+match (f1:Sektor {Naziv: 'Frontend'}) set f1.Broj_zaposlenih = 2
+match (b1:Sektor {Naziv: 'Backend'}) set b1.Broj_zaposlenih = 2
+match (h1:Sektor {Naziv: 'HR'}) set h1.Broj_zaposlenih = 2
+match (d1:Sektor {Naziv: 'Dizajn'}) set d1.Broj_zaposlenih = 2

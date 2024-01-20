@@ -22,7 +22,7 @@ const dodajRadnika = async (ime, prezime, jmbg, godinaRodjenja, email, brojTelef
 
         if (response.ok) {
             const data = await response.json();
-            console.log('Dodaj Radnika:', data);
+            alert('Radnik uspešno dodat')
         } else {
             console.error('Failed to add Radnik:', response.statusText);
         }
@@ -271,7 +271,7 @@ const dodajSektor = async (naziv) => {
         });
         if (response.ok) {
             const data = await response.json();
-            console.log('Dodaj Sektor:', data);
+            alert('Uspesno dodat novi sektor')
         } else {
             console.error('Failed to add Sektor:', response.statusText);
         }
@@ -922,11 +922,12 @@ btnDodajSektor.addEventListener('click', (event) => {
     event.preventDefault()
     
     const nazivSektora = document.getElementById('emailAddressBelow').value;
-
-    if (nazivSektora.trim() !== '') {
-        dodajSektor(nazivSektora);
+    if (nazivSektora.trim() == '') {
+        alert('Please enter a valid Naziv sektora.');
+    } else if (nazivSektora.includes(' ')) {
+        alert('Naziv sektora ne sme da sadrži blanko znak')
     } else {
-        console.log('Please enter a valid Naziv sektora.');
+        dodajSektor(nazivSektora);
     }
 })
 
@@ -941,7 +942,11 @@ btnDodajRadnika.addEventListener('click', (event) => {
     const brojTelefona = document.getElementById('brojTelefona').value;
     const selectedSektor = document.getElementById('nazivSektoraMeni').value;
 
-    dodajRadnika(ime, prezime, jmbg, godinaRodjenja, email, brojTelefona, selectedSektor);
+    if(jmbg.length != 13) {
+        alert('JMBG mora imati 13 cifara')
+    } else {
+        dodajRadnika(ime, prezime, jmbg, godinaRodjenja, email, brojTelefona, selectedSektor);
+    }
 })
 
 btnPrikaziProjekte.addEventListener('click', (event) => {

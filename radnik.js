@@ -262,7 +262,23 @@ export const obrisiRadnika = async(req, res) => {
 
 
         if (radnikPostoji) {
+            //da nadjemo sektor u kome radi nas radnik
+            //da se smanji broj zaposlenih u sektoru
+            await session
+                    .run(`MATCH (r:Radnik {JMBG: '${req.body.JMBG}'})-[:RADI_U]->(s:Sektor)
+                    SET s.Broj_zaposlenih = coalesce(s.Broj_zaposlenih, 0) - 1
+                    RETURN s.Naziv AS SektorNaziv, s.Broj_zaposlenih`)
+                    .then(result => {
+                        //console.log(`Broj zaposlenih u sektoru '${req.body.Sektor}': ${result.records[0]._fields[0]}`);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+
+            
+            //brišemo radnika
             const query = `MATCH (n:Radnik {JMBG: '${req.body.JMBG}'}) DETACH DELETE n`
+
             await session
                     .run(query)
                     .then(result => {
@@ -271,17 +287,6 @@ export const obrisiRadnika = async(req, res) => {
                     .catch(err => {
                         console.log(err)
                     })
-            
-            await session
-                    .run(`MATCH (s:Sektor {Naziv: '${req.body.Sektor}'})
-                            SET s.Broj_zaposlenih = coalesce(s.Broj_zaposlenih, 0) - 1
-                            RETURN s.Broj_zaposlenih`)
-                    .then(result => {
-                        //console.log(`Broj zaposlenih u sektoru '${req.body.Sektor}': ${result.records[0]._fields[0]}`);
-                    })
-                    .catch(err => {
-                        console.log(err);
-                    });
 
             return res.status(200).json('Radnik uspesno obrisan')
         } else {
