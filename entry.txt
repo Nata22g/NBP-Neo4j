@@ -1,5 +1,5 @@
+//ovo može odjednom:
 
-ovo prvo:
 CREATE (mar: Sektor {Naziv: 'Marketing', Broj_zaposlenih: 0})
 CREATE (hr: Sektor {Naziv: 'HR', Broj_zaposlenih: 0})
 CREATE (be: Sektor {Naziv: 'Backend', Broj_zaposlenih: 0})
@@ -36,28 +36,30 @@ CREATE (l)-[:RADI_U]->(fe)
 CREATE (t: Radnik {Ime: 'Teodora', Prezime: 'Tomić', JMBG: '0123456789012', Godina_rodjenja: 1994, Email: 'teodora@gmail.com', Broj_telefona: '0650123456'})
 CREATE (t)-[:RADI_U]->(dz)
 
-//ovo će normalno da se povećava kad se radi korišćenjem backend-a
+
+//ovo će normalno da se povećava kad se radi korišćenjem backend-a ali kad je preko baze mora ručno
+
 match (m1:Sektor {Naziv: 'Marketing'}) set m1.Broj_zaposlenih = 2
 match (f1:Sektor {Naziv: 'Frontend'}) set f1.Broj_zaposlenih = 2
 match (b1:Sektor {Naziv: 'Backend'}) set b1.Broj_zaposlenih = 2
 match (h1:Sektor {Naziv: 'HR'}) set h1.Broj_zaposlenih = 2
 match (d1:Sektor {Naziv: 'Dizajn'}) set d1.Broj_zaposlenih = 2
 
+
 CREATE (t11: Tim {Naziv: 'Projekat1 tim', Status: 'INACTIVE'})
 CREATE (t22: Tim {Naziv: 'Projekat2 tim', Status: 'ACTIVE'})
 CREATE (t33: Tim {Naziv: 'Projekat3 tim', Status: 'ACTIVE'})
 
 CREATE (p11: Projekat {Naziv: 'Projekat1', Status: 'Active', Budzet: '50000', Datum_pocetka: '2022-01-01', Rok_izrade: '2022-12-31'})
-
 CREATE (p2: Projekat {Naziv: 'Projekat2', Status: 'Active', Budzet: '75000', Datum_pocetka: '2022-02-01', Rok_izrade: '2022-11-30'})
-
 CREATE (p3: Projekat {Naziv: 'Projekat3', Status: 'Active', Budzet: '60000', Datum_pocetka: '2022-03-01', Rok_izrade: '2022-10-31'})
 
 
 
 
 
-posle redom:
+
+//ovo mora jedno po jedno:
 
 MATCH (projekat:Projekat {Naziv: 'Projekat1'}), (sektor:Sektor {Naziv: 'Marketing'})
 CREATE (projekat)-[:CILJANI_SEKTOR]->(sektor)
@@ -76,7 +78,6 @@ CREATE (t)-[:RADI_NA]->(p);
 
 MATCH (t:Tim {Naziv: 'Projekat3 tim'}),(p:Projekat {Naziv: 'Projekat3'})
 CREATE (t)-[:RADI_NA]->(p);
-
 
 
 MATCH (r1:Radnik {JMBG: '6789012345678'}), (r2:Radnik {JMBG: '7890123456789'})
